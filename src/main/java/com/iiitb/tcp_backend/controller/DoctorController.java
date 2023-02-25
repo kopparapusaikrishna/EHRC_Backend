@@ -1,5 +1,6 @@
 package com.iiitb.tcp_backend.controller;
 
+import com.iiitb.tcp_backend.clientmodels.DoctorAvailable;
 import com.iiitb.tcp_backend.model.DoctorDetails;
 import com.iiitb.tcp_backend.service.DoctorDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,13 @@ public class DoctorController {
     @Autowired
     DoctorDetailsService doctor_service;
     @PutMapping("/DoctorAvailability")
-    public ResponseEntity<String> change_status(@RequestBody DoctorDetails doctor) {
+    public ResponseEntity<String> change_status(@RequestBody DoctorAvailable doctor) {
         try {
 
             String ans = "";
             DoctorDetails doc = doctor_service.findById(doctor.getDoctorId());
-            doc.setDoctorAvailability(doctor.isDoctorAvailability());
+            doc.setDoctorAvailability(doctor.isStatus());
+            doctor_service.save(doc);
             ans = "Success";
             return new ResponseEntity<>(ans, HttpStatus.OK);
         } catch (Exception e) {

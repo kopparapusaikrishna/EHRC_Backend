@@ -1,10 +1,10 @@
-package com.iiitb.imap_backend;
+package com.iiitb.tcp_backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ImapBackendApplicationTests {
+class TcpBackendApplicationTests {
 
 	@Test
 	void contextLoads() {

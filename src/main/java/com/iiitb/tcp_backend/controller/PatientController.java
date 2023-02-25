@@ -29,6 +29,7 @@ public class PatientController {
     @GetMapping("/patient")
     public ResponseEntity<String> check_department(@RequestParam String department_name) {
         try {
+            System.out.println(department_name);
             String ans = "";
             int count = doctor_service.searchDepartment(department_name);
             if(count > 0)
@@ -37,7 +38,7 @@ public class PatientController {
             }
             else
             {
-                ans = "Failed";
+                ans = "Failure";
             }
             return new ResponseEntity<>(ans, HttpStatus.OK);
         } catch (Exception e) {

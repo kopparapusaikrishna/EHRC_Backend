@@ -16,13 +16,11 @@ public class DoctorController {
     @PutMapping("/DoctorAvailability")
     public ResponseEntity<String> change_status(@RequestBody DoctorAvailable doctor) {
         try {
-//            System.out.println("gotIt");
             String ans = "";
             DoctorDetails doc = doctor_service.findById(doctor.getDoctorId());
             doc.setDoctorAvailability(doctor.isStatus());
             doctor_service.save(doc);
             ans = "Success";
-//            System.out.println(ans);
             return new ResponseEntity<>(ans, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

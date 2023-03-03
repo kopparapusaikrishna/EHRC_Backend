@@ -93,6 +93,6 @@ ALTER TABLE doctor_login ADD CONSTRAINT Doctor_Login_fk0 FOREIGN KEY (doctor_id)
 
 insert into admin(admin_id,admin_name,admin_gender,admin_dob) values ("Admin1","admin1@gmail.com","Male","1985-08-11");
 
-insert into doctor_details(doctor_id ,doctor_name ,doctor_dob ,department_name ,doctor_qualification ,doctor_clinic_address ,doctor_phone_number,doctor_availability) values ("Doctor1", "Venkaiah Naidu", "1985-09-14", "gynecologists", "M.B.D.S","26/C,Hosur Road, Electronic City phase 1,Bangalore,560100","123456789",false);
+insert into doctor_details(doctor_id ,doctor_name ,doctor_dob ,department_name ,doctor_qualification ,doctor_clinic_address ,doctor_phone_number,doctor_availability) values ("Doctor1", "Venkaiah Naidu", "1985-09-14", "Gynecology", "M.B.D.S","26/C,Hosur Road, Electronic City phase 1,Bangalore,560100","123456789",false);
 
 insert into doctor_login(doctor_email_id,doctor_password,doctor_id) values("doctor1@gmail.com","doctor1@123","Doctor1");

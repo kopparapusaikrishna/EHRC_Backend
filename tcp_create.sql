@@ -75,6 +75,7 @@ CREATE TABLE admin_login (
 CREATE TABLE doctor_login (
 	doctor_email_id VARCHAR(255) NOT NULL,
 	doctor_password VARCHAR(255) NOT NULL,
+	is_available BOOLEAN NOT NULL,
 	doctor_id VARCHAR(255) NOT NULL UNIQUE,
 	PRIMARY KEY (doctor_email_id)
 );
@@ -95,4 +96,4 @@ insert into admin(admin_id,admin_name,admin_gender,admin_dob) values ("Admin1","
 
 insert into doctor_details(doctor_id ,doctor_name ,doctor_dob ,department_name ,doctor_qualification ,doctor_clinic_address ,doctor_phone_number,doctor_availability) values ("Doctor1", "Venkaiah Naidu", "1985-09-14", "Gynecology", "M.B.D.S","26/C,Hosur Road, Electronic City phase 1,Bangalore,560100","123456789",false);
 
-insert into doctor_login(doctor_email_id,doctor_password,doctor_id) values("doctor1@gmail.com","doctor1@123","Doctor1");
+insert into doctor_login(doctor_email_id,doctor_password,is_available,doctor_id) values("doctor1@gmail.com","doctor1@123",true,"Doctor1");

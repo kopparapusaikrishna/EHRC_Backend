@@ -9,6 +9,9 @@ import java.util.List;
 public interface DoctorDetailsRepository extends JpaRepository<DoctorDetails, String>{
     @Query(value = "SELECT * FROM doctor_details WHERE doctor_id = :id", nativeQuery = true)
     DoctorDetails findByDoctorId(@Param("id") String id);
+   
+    @Query(value = "SELECT * FROM doctor_details INNER JOIN doctor_login ON doctor_details.doctor_id=doctor_login.doctor_id;", nativeQuery = true)
+    List<DoctorDetails> getDoctors();
 
     @Query(value = "SELECT distinct department_name FROM doctor_details", nativeQuery = true)
     List<String> getDepartments();

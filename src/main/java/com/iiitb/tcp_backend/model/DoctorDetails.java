@@ -19,8 +19,10 @@ public class DoctorDetails {
     @Column(name = "doctor_dob")
     private Date doctorDob;
 
-
-    @Column(name = "department_name")
+    @Column(name = "doctor_gender")
+    private String doctorGender;
+    
+	@Column(name = "department_name")
     private String departmentName;
 
     @Column(name = "doctor_qualification")
@@ -36,8 +38,11 @@ public class DoctorDetails {
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean doctorAvailability;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd") 
+    @Column(name="doctor_start_date")
+    private Date doctorStartDate;
 
-    public DoctorDetails(String doctorId, String doctorName, String doctorDob, String departmentName, String doctorQualification, String doctorClinicAddress, String doctorPhoneNumber, boolean doctorAvailability) {
+    public DoctorDetails(String doctorId, String doctorName, String doctorDob, String departmentName, String doctorQualification, String doctorClinicAddress, String doctorPhoneNumber, boolean doctorAvailability, String doctorStartDate) {
         this.doctorId = doctorId;
         this.doctorName = doctorName;
         this.doctorDob = Date.valueOf(doctorDob);
@@ -46,6 +51,7 @@ public class DoctorDetails {
         this.doctorClinicAddress = doctorClinicAddress;
         this.doctorPhoneNumber = doctorPhoneNumber;
         this.doctorAvailability = doctorAvailability;
+        this.doctorStartDate = Date.valueOf(doctorStartDate);
     }
 
     public DoctorDetails() {
@@ -73,7 +79,25 @@ public class DoctorDetails {
         return doctorDob;
     }
 
-    public void setDoctorDob(String doctorDob) {
+    public String getDoctorGender() {
+  		return doctorGender;
+  	}
+
+  	public void setDoctorGender(String doctorGender) {
+  		this.doctorGender = doctorGender;
+  	}
+
+    
+    @Override
+	public String toString() {
+		return "DoctorDetails [doctorId=" + doctorId + ", doctorName=" + doctorName + ", doctorDob=" + doctorDob
+				+ ", doctorGender=" + doctorGender + ", departmentName=" + departmentName + ", doctorQualification="
+				+ doctorQualification + ", doctorClinicAddress=" + doctorClinicAddress + ", doctorPhoneNumber="
+				+ doctorPhoneNumber + ", doctorAvailability=" + doctorAvailability + ", doctorStartDate="
+				+ doctorStartDate + "]";
+	}
+
+	public void setDoctorDob(String doctorDob) {
         this.doctorDob = Date.valueOf(doctorDob);
     }
 
@@ -88,7 +112,15 @@ public class DoctorDetails {
     public String getDoctorQualification() {
         return doctorQualification;
     }
+    
+    public Date getDoctorStartDate() {
+    	return doctorStartDate;
+    }
 
+    public void setDoctorStartDate(String doctorStartDate) {
+    	this.doctorStartDate = Date.valueOf(doctorStartDate);
+    }
+    
     public void setDoctorQualification(String doctorQualification) {
         this.doctorQualification = doctorQualification;
     }
@@ -96,6 +128,8 @@ public class DoctorDetails {
     public String getDoctorClinicAddress() {
         return doctorClinicAddress;
     }
+    
+    
 
     public void setDoctorClinicAddress(String doctorClinicAddress) {
         this.doctorClinicAddress = doctorClinicAddress;

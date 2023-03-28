@@ -27,6 +27,11 @@ public class DoctorDetailsService {
         return repo.getDepartments();
     }
 
+    public List<DoctorDetails> getDoctors()
+    {
+    	return repo.getDoctors();
+    }
+    
     public int searchDepartment(String department)
     {
         return repo.countDepartment(department);

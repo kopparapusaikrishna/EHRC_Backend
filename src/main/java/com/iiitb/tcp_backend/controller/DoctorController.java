@@ -23,6 +23,7 @@ public class DoctorController {
     @PutMapping("/DoctorAvailability")
     public ResponseEntity<String> change_status(@RequestBody DoctorAvailable doctor) {
         try {
+			System.out.println("asdfhj");
             String ans = "";
             DoctorDetails doc = doctor_service.findById(doctor.getDoctorId());
             doc.setDoctorAvailability(doctor.isStatus());
@@ -36,7 +37,7 @@ public class DoctorController {
     
     
     @GetMapping("/GetDoctorList")
-    public ResponseEntity<List<Doctor>> sendDoctorList(@RequestBody Doctor doctor){
+    public ResponseEntity<List<Doctor>> sendDoctorList(){
     	
     	try {
     		System.out.println("HI");
@@ -47,7 +48,7 @@ public class DoctorController {
     		
     		for (int i=0 ; i<doctorDetails.size() ; i++)
     		{
-    			DoctorDetails singleDoctorDetails = new DoctorDetails();
+    			DoctorDetails singleDoctorDetails = doctorDetails.get(i);
     	
     			String name = singleDoctorDetails.getDoctorName();
     		    Date dob = singleDoctorDetails.getDoctorDob();

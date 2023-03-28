@@ -11,7 +11,7 @@ public class DoctorDetails {
     @Id
     @Column(name = "doctor_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String doctorId;
+    private int doctorId;
     @Column(name = "doctor_name")
     private String doctorName;
 
@@ -42,16 +42,15 @@ public class DoctorDetails {
     @Column(name="doctor_start_date")
     private Date doctorStartDate;
 
-    public DoctorDetails(String doctorId, String doctorName, String doctorDob, String departmentName, String doctorQualification, String doctorClinicAddress, String doctorPhoneNumber, boolean doctorAvailability, String doctorStartDate) {
-        this.doctorId = doctorId;
+    public DoctorDetails(String doctorName, Date doctorDob, String departmentName, String doctorQualification, String doctorClinicAddress, String doctorPhoneNumber, boolean doctorAvailability, Date doctorStartDate) {
         this.doctorName = doctorName;
-        this.doctorDob = Date.valueOf(doctorDob);
+        this.doctorDob = doctorDob;
         this.departmentName = departmentName;
         this.doctorQualification = doctorQualification;
         this.doctorClinicAddress = doctorClinicAddress;
         this.doctorPhoneNumber = doctorPhoneNumber;
         this.doctorAvailability = doctorAvailability;
-        this.doctorStartDate = Date.valueOf(doctorStartDate);
+        this.doctorStartDate = doctorStartDate;
     }
 
     public DoctorDetails() {
@@ -59,11 +58,11 @@ public class DoctorDetails {
     }
 
 
-    public String getDoctorId() {
+    public int getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(String doctorId) {
+    public void setDoctorId(int doctorId) {
         this.doctorId = doctorId;
     }
 

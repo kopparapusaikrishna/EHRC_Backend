@@ -12,18 +12,18 @@ public class Appointments {
     @Id
     @Column(name = "appointment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String appointmentId;
+    private int appointmentId;
     @Column(name = "doctor_id")
-    private String doctorId;
+    private int doctorId;
 
     @Column(name = "patient_id")
-    private String patientId;
+    private int patientId;
 
     @Column(name = "appointment_date")
     private Date appointmentDate;
 
     @Column(name = "prescription_id")
-    private String prescriptionId;
+    private int prescriptionId;
 
     @Column(name = "follow_up")
     @Type(type = "org.hibernate.type.NumericBooleanType")
@@ -35,8 +35,7 @@ public class Appointments {
     public Appointments() {
     }
 
-    public Appointments(String appointmentId, String doctorId, String patientId, String appointmentDate, String prescriptionId, boolean followUp, String followUpDate) {
-        this.appointmentId = appointmentId;
+    public Appointments( int doctorId, int patientId, String appointmentDate, int prescriptionId, boolean followUp, String followUpDate) {
         this.doctorId = doctorId;
         this.patientId = patientId;
         this.appointmentDate = Date.valueOf(appointmentDate);
@@ -45,27 +44,27 @@ public class Appointments {
         this.followUpDate = Date.valueOf(followUpDate);
     }
 
-    public String getAppointmentId() {
+    public int getAppointmentId() {
         return appointmentId;
     }
 
-    public void setAppointmentId(String appointmentId) {
+    public void setAppointmentId(int appointmentId) {
         this.appointmentId = appointmentId;
     }
 
-    public String getDoctorId() {
+    public int getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(String doctorId) {
+    public void setDoctorId(int doctorId) {
         this.doctorId = doctorId;
     }
 
-    public String getPatientId() {
+    public int getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(String patientId) {
+    public void setPatientId(int patientId) {
         this.patientId = patientId;
     }
 
@@ -77,11 +76,11 @@ public class Appointments {
         this.appointmentDate = Date.valueOf(appointmentDate);
     }
 
-    public String getPrescriptionId() {
+    public int getPrescriptionId() {
         return prescriptionId;
     }
 
-    public void setPrescriptionId(String prescriptionId) {
+    public void setPrescriptionId(int prescriptionId) {
         this.prescriptionId = prescriptionId;
     }
 

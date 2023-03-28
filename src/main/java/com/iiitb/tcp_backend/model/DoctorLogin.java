@@ -16,7 +16,7 @@ public class DoctorLogin {
     private String doctorPassword ;
 
     @Column(name = "doctor_id")
-    private String doctorId;
+    private int doctorId;
 
     @Column(name = "is_doctor_active")
     private boolean isDoctorActive;
@@ -24,7 +24,7 @@ public class DoctorLogin {
     public DoctorLogin() {
     }
 
-    public DoctorLogin(String doctorEmailId, String doctorPassword, String doctorId, boolean isDoctorActive) {
+    public DoctorLogin(String doctorEmailId, String doctorPassword, int doctorId, boolean isDoctorActive) {
         this.doctorEmailId = doctorEmailId;
         this.doctorPassword = doctorPassword;
         this.doctorId = doctorId;
@@ -57,11 +57,11 @@ public class DoctorLogin {
         this.doctorPassword = doctorPassword;
     }
 
-    public String getDoctorId() {
+    public int getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(String doctorId) {
+    public void setDoctorId(int doctorId) {
         this.doctorId = doctorId;
     }
 }

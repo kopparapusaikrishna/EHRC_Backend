@@ -12,7 +12,7 @@ public class PatientDetails {
     @Id
     @Column(name = "patient_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String patientId;
+    private int patientId;
     @Column(name = "patient_name")
     private String patientName;
 
@@ -36,8 +36,7 @@ public class PatientDetails {
     public PatientDetails() {
     }
 
-    public PatientDetails(String patientId, String patientName, String patientEmailId, String patientDob, String gender, String patientPhoneNumber, String patientLocation) {
-        this.patientId = patientId;
+    public PatientDetails(String patientName, String patientEmailId, String patientDob, String gender, String patientPhoneNumber, String patientLocation) {
         this.patientName = patientName;
         this.patientEmailId = patientEmailId;
         this.patientDob = Date.valueOf(patientDob);
@@ -46,11 +45,11 @@ public class PatientDetails {
         this.patientLocation = patientLocation;
     }
 
-    public String getPatientId() {
+    public int getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(String patientId) {
+    public void setPatientId(int patientId) {
         this.patientId = patientId;
     }
 

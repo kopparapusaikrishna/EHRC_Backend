@@ -16,7 +16,7 @@ public class AdminLogin {
     private String adminPassword ;
 
     @Column(name = "admin_id")
-    private String adminId;
+    private int adminId;
     
     @Column(name = "is_admin_active")
     private boolean isAdminActive;
@@ -25,7 +25,7 @@ public class AdminLogin {
 
     }
 
-    public AdminLogin(String adminEmailId, String adminPassword, String adminId, boolean isAdminActive) {
+    public AdminLogin(String adminEmailId, String adminPassword, int adminId, boolean isAdminActive) {
         this.adminEmailId = adminEmailId;
         this.adminPassword = adminPassword;
         this.adminId = adminId;
@@ -58,11 +58,11 @@ public class AdminLogin {
         this.adminPassword = adminPassword;
     }
 
-    public String getAdminId() {
+    public int getAdminId() {
         return adminId;
     }
 
-    public void setAdminId(String adminId) {
+    public void setAdminId(int adminId) {
         this.adminId = adminId;
     }
 }

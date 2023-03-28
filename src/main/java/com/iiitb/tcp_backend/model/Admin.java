@@ -12,7 +12,7 @@ public class Admin {
     @Id
     @Column(name = "admin_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String adminId;
+    private int adminId;
 
     @Column(name = "admin_name")
     private String adminName;
@@ -27,18 +27,17 @@ public class Admin {
     public Admin() {
     }
 
-    public Admin(String adminId, String adminName, String adminGender, String doctorDob) {
-        this.adminId = adminId;
+    public Admin(String adminName, String adminGender, String doctorDob) {
         this.adminName = adminName;
         this.adminGender = adminGender;
         this.doctorDob = Date.valueOf(doctorDob);
     }
 
-    public String getAdminId() {
+    public int getAdminId() {
         return adminId;
     }
 
-    public void setAdminId(String adminId) {
+    public void setAdminId(int adminId) {
         this.adminId = adminId;
     }
 

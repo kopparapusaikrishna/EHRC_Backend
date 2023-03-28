@@ -34,9 +34,25 @@ public class DoctorController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+	@PostMapping ("/PostDoctorDetails")
+	public ResponseEntity<String> addDoctor(@RequestBody Doctor doctor) {
+		try {
+			System.out.println("asdfhj");
+			String ans = "";
+			Doctor doc = doctor;
+			DoctorDetails doctorDetails = new DoctorDetails(doctor.getName(),doctor.getDob(),doctor.getDepartment_name(),doctor.getQualification(),doctor.getClinic_address(), doctor.getPhone_number(), false, doctor.getDoctor_start_date());
+			doctor_service.save(doctorDetails);
+
+			ans = "Success";
+			return new ResponseEntity<>(ans, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
     
-    
-    @GetMapping("/GetDoctorList")
+    @GetMapping("/GetDoctorsList")
     public ResponseEntity<List<Doctor>> sendDoctorList(){
     	
     	try {

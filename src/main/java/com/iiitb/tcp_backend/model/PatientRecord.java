@@ -12,10 +12,10 @@ public class PatientRecord {
     @Id
     @Column(name = "patient_record_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String patientRecordId;
+    private int patientRecordId;
 
     @Column(name = "patient_id")
-    private String patientId;
+    private int patientId;
 
     @Column(name = "patient_weight")
     private int patientWeight;
@@ -29,27 +29,26 @@ public class PatientRecord {
     public PatientRecord() {
     }
 
-    public PatientRecord(String patientRecordId, String patientId, int patientWeight, int patientTemperature, String patientBp) {
-        this.patientRecordId = patientRecordId;
+    public PatientRecord( int patientId, int patientWeight, int patientTemperature, String patientBp) {
         this.patientId = patientId;
         this.patientWeight = patientWeight;
         this.patientTemperature = patientTemperature;
         this.patientBp = patientBp;
     }
 
-    public String getPatientRecordId() {
+    public int getPatientRecordId() {
         return patientRecordId;
     }
 
-    public void setPatientRecordId(String patientRecordId) {
+    public void setPatientRecordId(int patientRecordId) {
         this.patientRecordId = patientRecordId;
     }
 
-    public String getPatientId() {
+    public int getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(String patientId) {
+    public void setPatientId(int patientId) {
         this.patientId = patientId;
     }
 

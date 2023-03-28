@@ -20,7 +20,7 @@ public class Prescriptions implements Serializable {
     @Id
     @Column(name = "prescription_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String prescription_id;
+    private int prescription_id;
 
     @Id
     @Column(name = "medicine_name")
@@ -45,8 +45,7 @@ public class Prescriptions implements Serializable {
     public Prescriptions() {
     }
 
-    public Prescriptions(String prescription_id, String medicineName, String medicinePower, String medicineDosage, int duration, String additionalInstructions, String doctorName) {
-        this.prescription_id = prescription_id;
+    public Prescriptions( String medicineName, String medicinePower, String medicineDosage, int duration, String additionalInstructions, String doctorName) {
         this.medicineName = medicineName;
         this.medicinePower = medicinePower;
         this.medicineDosage = medicineDosage;
@@ -55,11 +54,11 @@ public class Prescriptions implements Serializable {
         this.doctorName = doctorName;
     }
 
-    public String getPrescription_id() {
+    public int getPrescription_id() {
         return prescription_id;
     }
 
-    public void setPrescription_id(String prescription_id) {
+    public void setPrescription_id(int prescription_id) {
         this.prescription_id = prescription_id;
     }
 

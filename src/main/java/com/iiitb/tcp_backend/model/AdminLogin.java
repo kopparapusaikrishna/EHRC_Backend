@@ -9,7 +9,7 @@ import javax.persistence.*;
 public class AdminLogin {
     @Id
     @Column(name = "admin_email_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private String adminEmailId ;
 
     @Column(name = "admin_password")

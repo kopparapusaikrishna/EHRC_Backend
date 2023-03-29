@@ -24,13 +24,18 @@ public class Admin {
     @Column(name = "admin_dob")
     private Date adminDob;
 
+
+    @Column(name = "admin_phone_number")
+    private String adminPhoneNumber;
+
     public Admin() {
     }
 
-    public Admin(String adminName, String adminGender, String adminDob) {
+    public Admin(String adminName, String adminGender, Date adminDob, String adminPhoneNumber) {
         this.adminName = adminName;
         this.adminGender = adminGender;
-        this.adminDob = Date.valueOf(adminDob);
+        this.adminDob = adminDob;
+        this.adminPhoneNumber = adminPhoneNumber;
     }
 
     public int getAdminId() {
@@ -59,6 +64,14 @@ public class Admin {
 
     public Date getAdminDob() {
         return adminDob;
+    }
+
+    public String getAdminPhoneNumber() {
+        return adminPhoneNumber;
+    }
+
+    public void setAdminPhoneNumber(String adminPhoneNumber) {
+        this.adminPhoneNumber = adminPhoneNumber;
     }
 
     public void setAdminDob(String adminDob) {

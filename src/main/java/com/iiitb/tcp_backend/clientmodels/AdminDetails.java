@@ -12,7 +12,8 @@ public class AdminDetails {
     private String password;
     private String phone_number;
 
-    public AdminDetails( String name, Date dob, String gender, String email_id, String password, String phone_number) {
+    public AdminDetails( int id, String name, Date dob, String gender, String email_id, String password, String phone_number) {
+        this.admin_id = id;
         this.name = name;
         this.dob = dob;
         this.gender = gender;

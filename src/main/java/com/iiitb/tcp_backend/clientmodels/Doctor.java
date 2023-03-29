@@ -25,8 +25,9 @@ public class Doctor {
 	public Doctor() {
     }
 
-    public Doctor(String name, Date dob, String gender, String email_id, Date doctor_start_date, 
+    public Doctor(int id, String name, Date dob, String gender, String email_id, Date doctor_start_date,
     		String qualification, String department_name, String phone_number, String clinic_address, String password) {
+		this.doctor_id = id;
         this.name = name;
         this.dob = dob;
         this.gender = gender;

@@ -12,7 +12,7 @@ import java.util.List;
 public class DoctorDetailsService {
     @Autowired
     private DoctorDetailsRepository repo;
-    public DoctorDetails findById(String id)
+    public DoctorDetails findById(int id)
     {
         return repo.findByDoctorId(id);
     }
@@ -20,7 +20,7 @@ public class DoctorDetailsService {
     public DoctorDetails save(DoctorDetails movement) {
         //System.out.println(movement.getDoctorId());
         repo.save(movement);
-        //System.out.println(movement.getDoctorId());
+        //System.out.println(movement.getDoctorId());--
         return movement;
     }
 

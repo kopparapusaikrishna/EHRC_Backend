@@ -47,15 +47,31 @@ public class DoctorController {
 		try {
 			//System.out.println("asdfhj");
 			String ans = "";
-			Doctor doc = doctor;
-			DoctorDetails doctorDetails = new DoctorDetails(doctor.getName(), doctor.getGender(), doctor.getDob(),doctor.getDepartment_name(),doctor.getQualification(),doctor.getClinic_address(), doctor.getPhone_number(), false, doctor.getDoctor_start_date());
-			doctorDetails = doctor_service.save(doctorDetails);
+			int flag = 1;
+			List<DoctorLogin> doctorLogins = doctor_login_service.getDoctors();
 
-			DoctorLogin doctorLogin = new DoctorLogin(doctor.getEmail_id(), doctor.getPassword(), doctorDetails.getDoctorId(), true);
+			for(int i=0; i<doctorLogins.size(); i++)
+			{
+				if(doctorLogins.get(i).getDoctorEmailId().equalsIgnoreCase(doctor.getEmail_id())){
+					flag = 0;
+					break;
+				}
+			}
 
-			doctorLogin = doctor_login_service.save(doctorLogin);
+			if(flag==1)
+			{
+				DoctorDetails doctorDetails = new DoctorDetails(doctor.getName(), doctor.getGender(), doctor.getDob(),doctor.getDepartment_name(),doctor.getQualification(),doctor.getClinic_address(), doctor.getPhone_number(), false, doctor.getDoctor_start_date());
+				doctorDetails = doctor_service.save(doctorDetails);
 
-			ans = "Success";
+				DoctorLogin doctorLogin = new DoctorLogin(doctor.getEmail_id(), doctor.getPassword(), doctorDetails.getDoctorId(), true);
+
+				doctorLogin = doctor_login_service.save(doctorLogin);
+
+				ans = "Success";
+			}
+			else
+				ans = "Failed. Email Id is already existing.";
+
 			return new ResponseEntity<>(ans, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -75,8 +91,9 @@ public class DoctorController {
     		for (int i=0 ; i<doctorDetails.size() ; i++)
     		{
     			DoctorDetails singleDoctorDetails = doctorDetails.get(i);
-    	
+
     			String name = singleDoctorDetails.getDoctorName();
+				int id = singleDoctorDetails.getDoctorId();
     		    Date dob = singleDoctorDetails.getDoctorDob();
     		    String gender = singleDoctorDetails.getDoctorGender();
     		    String email_id = "nobody@gmail.com";   
@@ -86,12 +103,14 @@ public class DoctorController {
     		    String phone_number = singleDoctorDetails.getDoctorPhoneNumber();
     		    String clinic_address = singleDoctorDetails.getDoctorClinicAddress();
     		    String password = "qwertyjhgsaADGNN";
-    			
-    			Doctor doctor1 = new Doctor(name,dob,gender,email_id,doctor_start_date,
-    					qualification,department_name, phone_number, clinic_address, password);
-    			
-    			doctors.add(doctor1);
-    			
+
+				DoctorLogin docLogin = doctor_login_service.findById(id);
+				if(docLogin.getIsDoctorActive()==true){
+					Doctor doctor = new Doctor(id,name,dob,gender,email_id,doctor_start_date,
+							qualification,department_name, phone_number, clinic_address, password);
+
+					doctors.add(doctor);
+				}
     		}
     		
     		for(int i=0 ; i<doctors.size() ; i++)
@@ -110,4 +129,24 @@ public class DoctorController {
 		 	
     	
     }
+
+	@DeleteMapping("/DeleteDoctor")
+	public ResponseEntity<String> deleteDoctor(@RequestParam int doctorId)
+	{
+		System.out.println("Inside");
+		try
+		{
+			DoctorLogin doctorLoginDetails = doctor_login_service.findById(doctorId);
+			System.out.println("Inside1" + doctorId);
+			doctorLoginDetails.setIsDoctorActive(false);
+			System.out.println("Inside2");
+			doctor_login_service.save(doctorLoginDetails);
+			System.out.println("Inside3");
+
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		}
+		catch(Exception e){
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

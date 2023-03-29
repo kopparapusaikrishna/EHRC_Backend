@@ -32,14 +32,31 @@ public class AdminController {
         try {
             //System.out.println("asdfhj");
             String ans = "";
-            AdminDetails adminDetails = admindetails;
-            Admin admin = new Admin(adminDetails.getName(), adminDetails.getGender(),adminDetails.getDob(), adminDetails.getPhone_number());
-            admin = admin_service.save(admin);
+            int flag = 1;
 
-            AdminLogin adminLogin = new AdminLogin(adminDetails.getEmail_id(),adminDetails.getPassword(),admin.getAdminId(), true);
-            adminLogin = admin_login_service.save(adminLogin);
 
-            ans = "Success";
+            List<AdminLogin> adminLogins = admin_login_service.getAdmins();
+
+            for(int i=0; i<adminLogins.size(); i++)
+            {
+                if(adminLogins.get(i).getAdminEmailId().equalsIgnoreCase(admindetails.getEmail_id())){
+                    flag = 0;
+                    break;
+                }
+            }
+
+            if(flag==1)
+            {
+                Admin admin = new Admin(admindetails.getName(), admindetails.getGender(),admindetails.getDob(), admindetails.getPhone_number());
+                admin = admin_service.save(admin);
+                AdminLogin adminLogin = new AdminLogin(admindetails.getEmail_id(),admindetails.getPassword(),admin.getAdminId(), true);
+                adminLogin = admin_login_service.save(adminLogin);
+
+                ans = "Success";
+            }
+            else
+                ans = "Failed. Email Id is already existing.";
+
             return new ResponseEntity<>(ans, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,14 +78,20 @@ public class AdminController {
 
                 String name = singleAdmin.getAdminName();
                 Date dob = singleAdmin.getAdminDob();
+                int id = singleAdmin.getAdminId();
                 String gender = singleAdmin.getAdminGender();
                 String email_id = "nobody@gmail.com";
                 String phone_number = singleAdmin.getAdminPhoneNumber();
                 String password = "qwertyjhgsa";
 
-                AdminDetails admin = new AdminDetails(name, dob, gender, email_id, password, phone_number);
+                AdminLogin adLogin = admin_login_service.findById(id);
+                Admin admin1;
 
-                adminDetails.add(admin);
+                if (adLogin.getIsAdminActive()==true){
+                    AdminDetails admin = new AdminDetails(id,name, dob, gender, email_id, password, phone_number);
+                    adminDetails.add(admin);
+            }
+
 
             }
 
@@ -89,4 +112,20 @@ public class AdminController {
 
     }
 
+
+    @DeleteMapping("/DeleteAdmin")
+    public ResponseEntity<String> deleteAdmin(@RequestParam int adminId)
+    {
+        try
+        {
+            AdminLogin adminLoginDetails = admin_login_service.findById(adminId);
+            adminLoginDetails.setIsAdminActive(false);
+            admin_login_service.save(adminLoginDetails);
+
+            return new ResponseEntity<>("Success", HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

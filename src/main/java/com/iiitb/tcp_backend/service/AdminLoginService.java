@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -16,6 +17,11 @@ public class AdminLoginService {
     @Autowired
     private AdminLoginRepository repo;
 
+    public AdminLogin findById(int id)
+    {
+        return repo.findByAdminId(id);
+    }
+
     public AdminLogin save(AdminLogin movement) {
         System.out.println("Before" + movement.getAdminEmailId());
         repo.save(movement);
@@ -23,4 +29,8 @@ public class AdminLoginService {
         return movement;
     }
 
+    public List<AdminLogin> getAdmins()
+    {
+        return repo.getAdmins();
+    }
 }

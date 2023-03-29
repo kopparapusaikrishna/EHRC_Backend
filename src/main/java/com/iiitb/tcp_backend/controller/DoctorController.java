@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iiitb.tcp_backend.clientmodels.Doctor;
 import com.iiitb.tcp_backend.clientmodels.DoctorAvailable;
 import com.iiitb.tcp_backend.model.DoctorDetails;
+import com.iiitb.tcp_backend.model.DoctorLogin;
 import com.iiitb.tcp_backend.service.DoctorDetailsService;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.iiitb.tcp_backend.service.DoctorLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,14 @@ import org.springframework.web.bind.annotation.*;
 public class DoctorController {
     @Autowired
     DoctorDetailsService doctor_service;
+
+	@Autowired
+	DoctorLoginService doctor_login_service;
+
     @PutMapping("/DoctorAvailability")
     public ResponseEntity<String> change_status(@RequestBody DoctorAvailable doctor) {
         try {
-			System.out.println("asdfhj");
+			//System.out.println("asdfhj");
             String ans = "";
             DoctorDetails doc = doctor_service.findById(doctor.getDoctorId());
             doc.setDoctorAvailability(doctor.isStatus());
@@ -39,11 +45,15 @@ public class DoctorController {
 	@PostMapping ("/PostDoctorDetails")
 	public ResponseEntity<String> addDoctor(@RequestBody Doctor doctor) {
 		try {
-			System.out.println("asdfhj");
+			//System.out.println("asdfhj");
 			String ans = "";
 			Doctor doc = doctor;
-			DoctorDetails doctorDetails = new DoctorDetails(doctor.getName(),doctor.getDob(),doctor.getDepartment_name(),doctor.getQualification(),doctor.getClinic_address(), doctor.getPhone_number(), false, doctor.getDoctor_start_date());
-			doctor_service.save(doctorDetails);
+			DoctorDetails doctorDetails = new DoctorDetails(doctor.getName(), doctor.getGender(), doctor.getDob(),doctor.getDepartment_name(),doctor.getQualification(),doctor.getClinic_address(), doctor.getPhone_number(), false, doctor.getDoctor_start_date());
+			doctorDetails = doctor_service.save(doctorDetails);
+
+			DoctorLogin doctorLogin = new DoctorLogin(doctor.getEmail_id(), doctor.getPassword(), doctorDetails.getDoctorId(), true);
+
+			doctorLogin = doctor_login_service.save(doctorLogin);
 
 			ans = "Success";
 			return new ResponseEntity<>(ans, HttpStatus.OK);
@@ -56,11 +66,11 @@ public class DoctorController {
     public ResponseEntity<List<Doctor>> sendDoctorList(){
     	
     	try {
-    		System.out.println("HI");
+    		//System.out.println("HI");
     		List<Doctor> doctors = new ArrayList<Doctor>(); 
     		List<DoctorDetails> doctorDetails = doctor_service.getDoctors();
     		
-    		System.out.println(doctorDetails.toString());
+    		//System.out.println(doctorDetails.toString());
     		
     		for (int i=0 ; i<doctorDetails.size() ; i++)
     		{
@@ -86,7 +96,7 @@ public class DoctorController {
     		
     		for(int i=0 ; i<doctors.size() ; i++)
     		{
-    			System.out.println(doctors.get(i).toString());
+    			//System.out.println(doctors.get(i).toString());
     		}
     		
     		return new ResponseEntity<>(doctors, HttpStatus.OK);

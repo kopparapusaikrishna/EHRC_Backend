@@ -18,7 +18,9 @@ public class DoctorDetailsService {
     }
 
     public DoctorDetails save(DoctorDetails movement) {
+        //System.out.println(movement.getDoctorId());
         repo.save(movement);
+        //System.out.println(movement.getDoctorId());
         return movement;
     }
 

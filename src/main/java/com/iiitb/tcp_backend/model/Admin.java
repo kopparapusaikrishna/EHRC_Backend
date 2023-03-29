@@ -21,16 +21,16 @@ public class Admin {
     private String adminGender;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
-    @Column(name = "doctor_dob")
-    private Date doctorDob;
+    @Column(name = "admin_dob")
+    private Date adminDob;
 
     public Admin() {
     }
 
-    public Admin(String adminName, String adminGender, String doctorDob) {
+    public Admin(String adminName, String adminGender, String adminDob) {
         this.adminName = adminName;
         this.adminGender = adminGender;
-        this.doctorDob = Date.valueOf(doctorDob);
+        this.adminDob = Date.valueOf(adminDob);
     }
 
     public int getAdminId() {
@@ -57,11 +57,11 @@ public class Admin {
         this.adminGender = adminGender;
     }
 
-    public Date getDoctorDob() {
-        return doctorDob;
+    public Date getAdminDob() {
+        return adminDob;
     }
 
-    public void setDoctorDob(String doctorDob) {
-        this.doctorDob = Date.valueOf(doctorDob);
+    public void setAdminDob(String adminDob) {
+        this.adminDob = Date.valueOf(adminDob);
     }
 }

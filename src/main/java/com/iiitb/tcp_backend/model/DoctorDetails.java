@@ -42,9 +42,10 @@ public class DoctorDetails {
     @Column(name="doctor_start_date")
     private Date doctorStartDate;
 
-    public DoctorDetails(String doctorName, Date doctorDob, String departmentName, String doctorQualification, String doctorClinicAddress, String doctorPhoneNumber, boolean doctorAvailability, Date doctorStartDate) {
+    public DoctorDetails(String doctorName, String doctorGender, Date doctorDob, String departmentName, String doctorQualification, String doctorClinicAddress, String doctorPhoneNumber, boolean doctorAvailability, Date doctorStartDate) {
         this.doctorName = doctorName;
         this.doctorDob = doctorDob;
+        this.doctorGender = doctorGender;
         this.departmentName = departmentName;
         this.doctorQualification = doctorQualification;
         this.doctorClinicAddress = doctorClinicAddress;

@@ -9,7 +9,7 @@ import javax.persistence.*;
 public class DoctorLogin {
     @Id
     @Column(name = "doctor_email_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private String doctorEmailId ;
 
     @Column(name = "doctor_password")

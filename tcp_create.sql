@@ -96,10 +96,18 @@ ALTER TABLE admin_login ADD CONSTRAINT Admin_Login_fk0 FOREIGN KEY (admin_id) RE
 
 ALTER TABLE doctor_login ADD CONSTRAINT Doctor_Login_fk0 FOREIGN KEY (doctor_id) REFERENCES doctor_details(doctor_id);
 
+
 insert into admin(admin_name,admin_gender,admin_dob, admin_phone_number) values ("admin1@gmail.com","Male","1985-08-11","1234567890");
 
 insert into doctor_details(doctor_name ,doctor_dob, doctor_gender ,department_name ,doctor_qualification ,doctor_clinic_address ,doctor_phone_number,doctor_availability, doctor_start_date) values ( "Venkaiah Naidu", "1985-09-14", "Male", "Gynecology", "M.B.D.S","26/C,Hosur Road, Electronic City phase 1,Bangalore,560100","123456789",false, "2004-01-12");
 
 insert into doctor_login(doctor_email_id,doctor_password,doctor_id, is_doctor_active) values("doctor1@gmail.com","doctor1@123",1,true);
+INSERT INTO prescriptions (prescription_id, medicine_name, medicine_power, medicine_dosage, duration, additional_instructions, patient_record_id) VALUES ('1', 'dolo', '650', '3 times', '1 ', 'nothing', '1');
+INSERT INTO patient_record (patient_record_id, patient_id, patient_weight, patient_temperature, patient_bp) VALUES ('1', '1', '80', '96', '120');
 
 insert into admin_login(admin_email_id,admin_password,admin_id, is_admin_active) values("admin1@gmail.com","admin1@123",1,true);
+INSERT INTO patient_details (patient_id, patient_name, patient_email_id, patient_dob, gender, patient_phone_number, patient_location) VALUES ('1', 'saim', 'saim@gmail.com', '2002-02-02', 'Male', '12567890', 'hyd');
+
+INSERT INTO appointments (appointment_id, doctor_id, patient_id, appointment_date, prescription_id, follow_up) VALUES ('1', '1', '1', '2023-03-28', '1', '0',null);
+INSERT INTO appointments (appointment_id, doctor_id, patient_id, appointment_date, prescription_id, follow_up) VALUES ('2', '1', '1', '23-03-28', '2', '0',null);
+

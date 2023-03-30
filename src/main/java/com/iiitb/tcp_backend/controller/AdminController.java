@@ -75,12 +75,13 @@ public class AdminController {
             for (int i=0 ; i<admins.size() ; i++)
             {
                 Admin singleAdmin = admins.get(i);
+                AdminLogin adminLoginDetails = admin_login_service.findById(singleAdmin.getAdminId());
 
                 String name = singleAdmin.getAdminName();
                 Date dob = singleAdmin.getAdminDob();
                 int id = singleAdmin.getAdminId();
                 String gender = singleAdmin.getAdminGender();
-                String email_id = "nobody@gmail.com";
+                String email_id = adminLoginDetails.getAdminEmailId();
                 String phone_number = singleAdmin.getAdminPhoneNumber();
                 String password = "qwertyjhgsa";
 

@@ -3,12 +3,15 @@ package com.iiitb.tcp_backend.controller;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iiitb.tcp_backend.clientmodels.Doctor;
 import com.iiitb.tcp_backend.clientmodels.DoctorAvailable;
+import com.iiitb.tcp_backend.model.Appointments;
 import com.iiitb.tcp_backend.model.DoctorDetails;
 import com.iiitb.tcp_backend.model.DoctorLogin;
+import com.iiitb.tcp_backend.service.AppointmentsService;
 import com.iiitb.tcp_backend.service.DoctorDetailsService;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.iiitb.tcp_backend.service.DoctorLoginService;
@@ -25,6 +28,9 @@ public class DoctorController {
 
 	@Autowired
 	DoctorLoginService doctor_login_service;
+
+	@Autowired
+	AppointmentsService appointments_service;
 
     @PutMapping("/DoctorAvailability")
     public ResponseEntity<String> change_status(@RequestBody DoctorAvailable doctor) {
@@ -149,4 +155,35 @@ public class DoctorController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	@GetMapping("/NoOfConsultations")
+	public ResponseEntity<Integer> noOfAppointments(@RequestParam int doctorId, @RequestParam int noOfDays)
+	{
+		try{
+			List<Appointments> appointments = appointments_service.getAppointments();
+			int count = 0;
+			java.util.Date today = new java.util.Date();
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DATE, -noOfDays);
+			java.util.Date startDate = cal.getTime();
+
+			for(int i=0 ; i<appointments.size() ; i++)
+			{
+				java.util.Date appointmentDate = new java.util.Date(appointments.get(i).getAppointmentDate().getTime());
+
+
+				if(!(appointmentDate.before(startDate) || appointmentDate.after(today)))
+				{
+					count++;
+				}
+
+			}
+
+			return new ResponseEntity<>(count, HttpStatus.OK);
+
+		} catch (Exception e){
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 }

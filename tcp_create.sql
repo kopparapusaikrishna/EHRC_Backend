@@ -84,6 +84,13 @@ CREATE TABLE doctor_login (
 	PRIMARY KEY (doctor_email_id)
 );
 
+CREATE TABLE patient_login (
+	patient_id INT NOT NULL AUTO_INCREMENT,
+	phone_number VARCHAR(255),
+	otp_value VARCHAR(255) NOT NULL,
+	PRIMARY KEY (patient_id)
+);
+
 ALTER TABLE appointments ADD CONSTRAINT Appointments_fk0 FOREIGN KEY (doctor_id) REFERENCES doctor_details(doctor_id);
 
 ALTER TABLE appointments ADD CONSTRAINT Appointments_fk1 FOREIGN KEY (patient_id) REFERENCES patient_details(patient_id);
@@ -102,12 +109,14 @@ insert into admin(admin_name,admin_gender,admin_dob, admin_phone_number) values 
 insert into doctor_details(doctor_name ,doctor_dob, doctor_gender ,department_name ,doctor_qualification ,doctor_clinic_address ,doctor_phone_number,doctor_availability, doctor_start_date) values ( "Venkaiah Naidu", "1985-09-14", "Male", "Gynecology", "M.B.D.S","26/C,Hosur Road, Electronic City phase 1,Bangalore,560100","123456789",false, "2004-01-12");
 
 insert into doctor_login(doctor_email_id,doctor_password,doctor_id, is_doctor_active) values("doctor1@gmail.com","doctor1@123",1,true);
-INSERT INTO prescriptions (prescription_id, medicine_name, medicine_power, medicine_dosage, duration, additional_instructions, patient_record_id) VALUES ('1', 'dolo', '650', '3 times', '1 ', 'nothing', '1');
-INSERT INTO patient_record (patient_record_id, patient_id, patient_weight, patient_temperature, patient_bp) VALUES ('1', '1', '80', '96', '120');
+
+INSERT INTO patient_record ( patient_id, patient_weight, patient_temperature, patient_bp) VALUES ('1', '80', '96', '120');
+INSERT INTO prescriptions (medicine_name, medicine_power, medicine_dosage, duration, additional_instructions, patient_record_id) VALUES ('dolo', '650', '3 times', '1 ', 'nothing', '1');
+
 
 insert into admin_login(admin_email_id,admin_password,admin_id, is_admin_active) values("admin1@gmail.com","admin1@123",1,true);
-INSERT INTO patient_details (patient_id, patient_name, patient_email_id, patient_dob, gender, patient_phone_number, patient_location) VALUES ('1', 'saim', 'saim@gmail.com', '2002-02-02', 'Male', '12567890', 'hyd');
+INSERT INTO patient_details (patient_name, patient_email_id, patient_dob, gender, patient_phone_number, patient_location) VALUES ('saim', 'saim@gmail.com', '2002-02-02', 'Male', '12567890', 'hyd');
 
-INSERT INTO appointments (appointment_id, doctor_id, patient_id, appointment_date, prescription_id, follow_up) VALUES ('1', '1', '1', '2023-03-28', '1', '0',null);
-INSERT INTO appointments (appointment_id, doctor_id, patient_id, appointment_date, prescription_id, follow_up) VALUES ('2', '1', '1', '23-03-28', '2', '0',null);
+INSERT INTO appointments (doctor_id, patient_id, appointment_date, prescription_id, follow_up,follow_up_date) VALUES ('1', '1', '2023-03-28', '1', '0',null);
+INSERT INTO appointments (doctor_id, patient_id, appointment_date, prescription_id, follow_up, follow_up_date) VALUES ('1', '1', '23-03-28', '1', '0',null);
 

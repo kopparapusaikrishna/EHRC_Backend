@@ -21,6 +21,11 @@ public class DoctorLoginService {
         return repo.findByDoctorId(id);
     }
 
+    public DoctorLogin findByemail(String username)
+    {
+        return repo.findByDoctorEmail(username);
+    }
+
     public DoctorLogin save(DoctorLogin movement) {
         System.out.println("Before" + movement.getDoctorEmailId());
         repo.save(movement);

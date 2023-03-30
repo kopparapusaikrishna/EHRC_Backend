@@ -10,6 +10,7 @@ import com.iiitb.tcp_backend.model.DoctorDetails;
 import com.iiitb.tcp_backend.model.DoctorLogin;
 import com.iiitb.tcp_backend.service.AdminDetailsService;
 import com.iiitb.tcp_backend.service.AdminLoginService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,15 @@ public class AdminController {
     AdminDetailsService admin_service;
     @Autowired
     AdminLoginService admin_login_service;
+
+    @GetMapping("/Admin/{username}/{password}")
+    public int Adminlogin(@PathVariable("username") String username1,@PathVariable("password") String password){
+        AdminLogin s = admin_login_service.findByemail(username1);
+        if(s!=null && s.getAdminPassword().equals(password)) {
+            return 1;
+        }
+        return 0;
+    }
 
     @PostMapping("/PostAdminDetails")
     public ResponseEntity<String> addDoctor(@RequestBody AdminDetails admindetails) {

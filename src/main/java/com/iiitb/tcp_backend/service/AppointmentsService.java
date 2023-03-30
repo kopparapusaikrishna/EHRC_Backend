@@ -8,6 +8,8 @@ import com.iiitb.tcp_backend.repository.DoctorDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -22,9 +24,9 @@ public class AppointmentsService {
     {
         return repo.findByDoctorId(id);
     }
-    public List<Appointments> getAppointments()
+    public List<Appointments> getAppointments(Date start_date, Date end_date, int doctor_id)
     {
-        return repo.getAppointments();
+        return repo.getAppointments(start_date, end_date, doctor_id);
     }
 
 }

@@ -13,6 +13,10 @@ public interface DoctorLoginRepository extends JpaRepository<DoctorLogin, String
     @Query(value = "SELECT * FROM doctor_login WHERE doctor_id = :id", nativeQuery = true)
     DoctorLogin findByDoctorId(@Param("id") int id);
 
+
+    @Query(value = "SELECT * FROM doctor_login WHERE doctor_email_id = :email_id", nativeQuery = true)
+    DoctorLogin findByDoctorEmail(@Param("email_id") String email_id);
+
     @Query(value = "SELECT * FROM doctor_login", nativeQuery = true)
     List<DoctorLogin> getDoctors();
 

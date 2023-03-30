@@ -13,6 +13,9 @@ public interface AdminLoginRepository extends JpaRepository<AdminLogin, String> 
     @Query(value = "SELECT * FROM admin_login WHERE admin_id = :id", nativeQuery = true)
     AdminLogin findByAdminId(@Param("id") int id);
 
+    @Query(value = "SELECT * FROM admin_login WHERE admin_email_id = :email_id", nativeQuery = true)
+    AdminLogin findByAdminEmail(@Param("email_id") String email_id);
+
     @Query(value = "SELECT * FROM admin_login", nativeQuery = true)
     List<AdminLogin> getAdmins();
 

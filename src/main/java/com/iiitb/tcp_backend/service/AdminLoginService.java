@@ -22,6 +22,11 @@ public class AdminLoginService {
         return repo.findByAdminId(id);
     }
 
+    public AdminLogin findByemail(String username)
+    {
+        return repo.findByAdminEmail(username);
+    }
+
     public AdminLogin save(AdminLogin movement) {
         System.out.println("Before" + movement.getAdminEmailId());
         repo.save(movement);

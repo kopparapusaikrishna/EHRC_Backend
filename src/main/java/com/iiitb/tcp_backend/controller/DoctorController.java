@@ -48,6 +48,16 @@ public class DoctorController {
     }
 
 
+	@GetMapping("/Doctor/{username}/{password}")
+	public int Doctorlogin(@PathVariable("username") String username1,@PathVariable("password") String password){
+		DoctorLogin s = doctor_login_service.findByemail(username1);
+		if(s!=null && s.getDoctorPassword().equals(password)) {
+			return 1;
+		}
+		return 0;
+	}
+
+
 	@PostMapping ("/PostDoctorDetails")
 	public ResponseEntity<String> addDoctor(@RequestBody Doctor doctor) {
 		try {
@@ -160,7 +170,8 @@ public class DoctorController {
 	public ResponseEntity<Integer> noOfAppointments(@RequestParam int doctorId, @RequestParam int noOfDays)
 	{
 		try{
-			List<Appointments> appointments = appointments_service.getAppointments();
+			List<Appointments> appointments = appointments_service.findById(doctorId);
+
 			int count = 0;
 			java.util.Date today = new java.util.Date();
 			Calendar cal = Calendar.getInstance();

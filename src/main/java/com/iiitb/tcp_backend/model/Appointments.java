@@ -1,5 +1,6 @@
 package com.iiitb.tcp_backend.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sun.xml.bind.v2.schemagen.xmlschema.Appinfo;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -14,34 +15,54 @@ public class Appointments {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int appointmentId;
     @Column(name = "doctor_id")
+    //@Convert(converter = PIIAttributeConverter.class)
     private int doctorId;
 
     @Column(name = "patient_id")
+    //@Convert(converter = PIIAttributeConverter.class)
     private int patientId;
 
     @Column(name = "appointment_date")
+    //@Convert(converter = PIIAttributeConverter.class)
     private Date appointmentDate;
-
-    @Column(name = "prescription_id")
-    private int prescriptionId;
 
     @Column(name = "follow_up")
     @Type(type = "org.hibernate.type.NumericBooleanType")
+    //@Convert(converter = PIIAttributeConverter.class)
     private boolean followUp;
 
     @Column(name = "follow_up_date")
+    //@Convert(converter = PIIAttributeConverter.class)
     private Date followUpDate;
 
-    public Appointments() {
+    @Column(name = "medicines")
+    private String medicines;
+    @Column(name = "patient_weight")
+    //@Convert(converter = PIIAttributeConverter.class)
+    private int patientWeight;
+
+    @Column(name = "patient_temperature")
+    //@Convert(converter = PIIAttributeConverter.class)
+    private int patientTemperature;
+
+    @Column(name = "patient_bp")
+    //@Convert(converter = PIIAttributeConverter.class)
+    private String patientBp;
+
+    public Appointments(){
+
     }
 
-    public Appointments( int doctorId, int patientId, String appointmentDate, int prescriptionId, boolean followUp, String followUpDate) {
+    public Appointments(int doctorId, int patientId, Date appointmentDate, boolean followUp, Date followUpDate, String medicines, int patientWeight, int patientTemperature, String patientBp) {
         this.doctorId = doctorId;
         this.patientId = patientId;
-        this.appointmentDate = Date.valueOf(appointmentDate);
-        this.prescriptionId = prescriptionId;
+        this.appointmentDate = appointmentDate;
         this.followUp = followUp;
-        this.followUpDate = Date.valueOf(followUpDate);
+        this.followUpDate = followUpDate;
+        this.medicines = medicines;
+        this.patientWeight = patientWeight;
+        this.patientTemperature = patientTemperature;
+        this.patientBp = patientBp;
     }
 
     public int getAppointmentId() {
@@ -72,17 +93,10 @@ public class Appointments {
         return appointmentDate;
     }
 
-    public void setAppointmentDate(String appointmentDate) {
-        this.appointmentDate = Date.valueOf(appointmentDate);
+    public void setAppointmentDate(Date appointmentDate) {
+        this.appointmentDate = appointmentDate;
     }
 
-    public int getPrescriptionId() {
-        return prescriptionId;
-    }
-
-    public void setPrescriptionId(int prescriptionId) {
-        this.prescriptionId = prescriptionId;
-    }
 
     public boolean isFollowUp() {
         return followUp;
@@ -96,7 +110,40 @@ public class Appointments {
         return followUpDate;
     }
 
-    public void setFollowUpDate(String followUpDate) {
-        this.followUpDate = Date.valueOf(followUpDate);
+    public void setFollowUpDate(Date followUpDate) {
+        this.followUpDate = followUpDate;
     }
+
+    public String getMedicines() {
+        return medicines;
+    }
+
+    public void setMedicines(String medicines) {
+        this.medicines = medicines;
+    }
+
+    public int getPatientWeight() {
+        return patientWeight;
+    }
+
+    public void setPatientWeight(int patientWeight) {
+        this.patientWeight = patientWeight;
+    }
+
+    public int getPatientTemperature() {
+        return patientTemperature;
+    }
+
+    public void setPatientTemperature(int patientTemperature) {
+        this.patientTemperature = patientTemperature;
+    }
+
+    public String getPatientBp() {
+        return patientBp;
+    }
+
+    public void setPatientBp(String patientBp) {
+        this.patientBp = patientBp;
+    }
+
 }

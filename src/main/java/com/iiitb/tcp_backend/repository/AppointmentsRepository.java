@@ -18,4 +18,7 @@ public interface AppointmentsRepository extends JpaRepository<Appointments, Stri
     @Query(value = "SELECT * FROM Appointments a where a.doctor_id=:doctor_id and a.appointment_date between :start_date and :end_date", nativeQuery = true)
     List<Appointments> getAppointments(@Param("start_date") Date start_date, @Param("end_date") Date end_date, @Param("doctor_id") int doctor_id);
 
+    @Query(value= "SELECT * FROM Appointments a where a.appointment_id = :id", nativeQuery = true)
+    Appointments findByAppointmentId(@Param("id") int id);
+
 }

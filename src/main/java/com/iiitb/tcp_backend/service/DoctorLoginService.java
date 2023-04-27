@@ -38,4 +38,8 @@ public class DoctorLoginService {
         return repo.getDoctors();
     }
 
+    public DoctorLogin getdoctorlogindetails(String email_id){
+        return repo.findByDoctorEmail(email_id);
+    }
+
 }

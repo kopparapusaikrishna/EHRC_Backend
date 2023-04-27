@@ -1,11 +1,16 @@
 package com.iiitb.tcp_backend.controller;
-
+import com.iiitb.tcp_backend.JwtUtil.TokenManager;
+import com.iiitb.tcp_backend.JwtUtil.models.JwtResponseModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.iiitb.tcp_backend.JwtUtil.JwtUserDetailsService;
+import com.iiitb.tcp_backend.JwtUtil.models.JwtResponseModel;
 import com.iiitb.tcp_backend.clientmodels.Doctor;
 import com.iiitb.tcp_backend.clientmodels.DoctorAvailable;
 import com.iiitb.tcp_backend.model.Appointments;
 import com.iiitb.tcp_backend.model.DoctorDetails;
 import com.iiitb.tcp_backend.model.DoctorLogin;
+import com.iiitb.tcp_backend.repository.DoctorDetailsRepository;
+import com.iiitb.tcp_backend.repository.DoctorLoginRepository;
 import com.iiitb.tcp_backend.service.AppointmentsService;
 import com.iiitb.tcp_backend.service.DoctorDetailsService;
 
@@ -13,11 +18,13 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 import com.iiitb.tcp_backend.service.DoctorLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*")
@@ -25,15 +32,19 @@ import org.springframework.web.bind.annotation.*;
 public class DoctorController {
     @Autowired
     DoctorDetailsService doctor_service;
-
+	@Autowired
+	TokenManager tokenManager;
 	@Autowired
 	DoctorLoginService doctor_login_service;
-
+    @Autowired
+	JwtUserDetailsService userDetailsService;
+	@Autowired
+	DoctorDetailsRepository doctorDetailsRepository;
 	@Autowired
 	AppointmentsService appointments_service;
 
     @PutMapping("/DoctorAvailability")
-    public ResponseEntity<String> change_status(@RequestBody DoctorAvailable doctor) {
+    public ResponseEntity<Integer> change_status(@RequestBody DoctorAvailable doctor) {
         try {
 			//System.out.println("asdfhj");
             String ans = "";
@@ -41,20 +52,61 @@ public class DoctorController {
             doc.setDoctorAvailability(doctor.isStatus());
             doctor_service.save(doc);
             ans = "Success";
-            return new ResponseEntity<>(ans, HttpStatus.OK);
+			System.out.println(ans);
+            return new ResponseEntity<>(1, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			System.out.println("endddddddddddddddddddddddnnnnnnnnnnnnnnnnnnnnnnnnnn");
+            return new ResponseEntity<>(0, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+	/*@CrossOrigin
+	@GetMapping("/verifyOTP")
+	public ResponseEntity createToken(@RequestParam String phone_number,@RequestParam String otp) {
+
+		String auth = patientLoginService.verifyOTP(phone_number,otp);
+		System.out.println("reached: "+ auth);
+
+		if (Objects.equals(auth, "approved")) {
+			System.out.println("entered");
+			final UserDetails userDetails = userDetailsService.loadUserByUsername(phone_number);
+			final String jwtToken = tokenManager.generateJwtToken(userDetails);
+			System.out.println("hellso");
+			System.out.println(jwtToken);
+			//System.out.println());
+			return ResponseEntity.ok(new JwtResponseModel(jwtToken));
+
+		}
+		else
+		{
+			return ResponseEntity.ok(new JwtResponseModel("not"));
+		}
+		//return auth;
+	}*/
 
 	@GetMapping("/Doctor/{username}/{password}")
-	public int Doctorlogin(@PathVariable("username") String username1,@PathVariable("password") String password){
+	public ResponseEntity Doctorlogin(@PathVariable("username") String username1,@PathVariable("password") String password){
 		DoctorLogin s = doctor_login_service.findByemail(username1);
 		if(s!=null && s.getDoctorPassword().equals(password)) {
-			return 1;
+			//System.out.println("entered");
+			final UserDetails userDetails = userDetailsService.loadDoctorByUsername(username1,password);
+
+			final String jwtToken = tokenManager.generateJwtToken(userDetails);
+			//System.out.println("hellso");
+			//System.out.println(jwtToken);
+			//System.out.println());
+			return ResponseEntity.ok(new JwtResponseModel(jwtToken));
 		}
-		return 0;
+		return ResponseEntity.ok(new JwtResponseModel("not"));
+	}
+	@GetMapping("/doctordetails")
+	public ResponseEntity<DoctorDetails> getdoctordetails(@RequestParam String email_id){
+		DoctorLogin dl=doctor_login_service.getdoctorlogindetails(email_id);
+		DoctorDetails dd=doctorDetailsRepository.findByDoctorId(dl.getDoctorId());
+		if (dd!=null){
+			return new ResponseEntity<>(dd,HttpStatus.OK);
+		}
+		return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 

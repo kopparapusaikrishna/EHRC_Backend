@@ -20,4 +20,6 @@ public interface DoctorDetailsRepository extends JpaRepository<DoctorDetails, St
 
     @Query(value = "SELECT count(department_name) FROM doctor_details where doctor_availability = true and  department_name = :department", nativeQuery = true)
     int countDepartment(@Param("department") String department);
+
+
 }

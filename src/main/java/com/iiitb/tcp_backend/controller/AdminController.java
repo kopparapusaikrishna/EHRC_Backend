@@ -2,6 +2,9 @@ package com.iiitb.tcp_backend.controller;
 
 
 
+import com.iiitb.tcp_backend.JwtUtil.JwtUserDetailsService;
+import com.iiitb.tcp_backend.JwtUtil.TokenManager;
+import com.iiitb.tcp_backend.JwtUtil.models.JwtResponseModel;
 import com.iiitb.tcp_backend.clientmodels.AdminDetails;
 import com.iiitb.tcp_backend.clientmodels.Doctor;
 import com.iiitb.tcp_backend.model.Admin;
@@ -11,15 +14,17 @@ import com.iiitb.tcp_backend.model.DoctorLogin;
 import com.iiitb.tcp_backend.service.AdminDetailsService;
 import com.iiitb.tcp_backend.service.AdminLoginService;
 
+import com.iiitb.tcp_backend.service.DoctorLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-
+import com.iiitb.tcp_backend.JwtUtil.models.JwtResponseModel;
 @CrossOrigin(origins = "*")
 @RestController
 public class AdminController {
@@ -28,17 +33,29 @@ public class AdminController {
     @Autowired
     AdminLoginService admin_login_service;
 
+    @Autowired
+    JwtUserDetailsService userDetailsService;
+    @Autowired
+    TokenManager tokenManager;
+
     @GetMapping("/Admin/{username}/{password}")
-    public int Adminlogin(@PathVariable("username") String username1,@PathVariable("password") String password){
+    public ResponseEntity Adminlogin(@PathVariable("username") String username1,@PathVariable("password") String password){
         AdminLogin s = admin_login_service.findByemail(username1);
         if(s!=null && s.getAdminPassword().equals(password)) {
-            return 1;
+            //System.out.println("entered");
+            final UserDetails userDetails = userDetailsService.loadAdminByUsername(username1,password);
+
+            final String jwtToken = tokenManager.generateJwtToken(userDetails);
+            //System.out.println("hellso");
+            //System.out.println(jwtToken);
+            //System.out.println());
+            return ResponseEntity.ok(new JwtResponseModel(jwtToken));
         }
-        return 0;
+        return ResponseEntity.ok(new JwtResponseModel("not"));
     }
 
     @PostMapping("/PostAdminDetails")
-    public ResponseEntity<String> addDoctor(@RequestBody AdminDetails admindetails) {
+    public ResponseEntity<String> addAdmin(@RequestBody AdminDetails admindetails) {
         try {
             //System.out.println("asdfhj");
             String ans = "";

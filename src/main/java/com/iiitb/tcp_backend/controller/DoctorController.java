@@ -6,9 +6,12 @@ import com.iiitb.tcp_backend.JwtUtil.JwtUserDetailsService;
 import com.iiitb.tcp_backend.JwtUtil.models.JwtResponseModel;
 import com.iiitb.tcp_backend.clientmodels.Doctor;
 import com.iiitb.tcp_backend.clientmodels.DoctorAvailable;
+import com.iiitb.tcp_backend.clientmodels.DoctorPrevAppointments;
+import com.iiitb.tcp_backend.clientmodels.PatientPrevAppointments;
 import com.iiitb.tcp_backend.model.Appointments;
 import com.iiitb.tcp_backend.model.DoctorDetails;
 import com.iiitb.tcp_backend.model.DoctorLogin;
+import com.iiitb.tcp_backend.model.PatientDetails;
 import com.iiitb.tcp_backend.repository.DoctorDetailsRepository;
 import com.iiitb.tcp_backend.repository.DoctorLoginRepository;
 import com.iiitb.tcp_backend.service.AppointmentsService;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.iiitb.tcp_backend.service.DoctorLoginService;
+import com.iiitb.tcp_backend.service.PatientsDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +46,9 @@ public class DoctorController {
 	DoctorDetailsRepository doctorDetailsRepository;
 	@Autowired
 	AppointmentsService appointments_service;
+
+	@Autowired
+	PatientsDetailsService patientsDetailsService;
 
     @PutMapping("/DoctorAvailability")
     public ResponseEntity<Integer> change_status(@RequestBody DoctorAvailable doctor) {
@@ -245,6 +252,30 @@ public class DoctorController {
 			return new ResponseEntity<>(count, HttpStatus.OK);
 
 		} catch (Exception e){
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping("/doctorPreviousAppointmentsList")
+	public ResponseEntity<List<DoctorPrevAppointments>> getDoctorPrevAppointmentsLst(@RequestParam int doctor_id) {
+		try
+		{
+			System.out.println("inside doctorPreviousAppointmentsList");
+			List<Appointments> appointmentsLst =  appointments_service.findById(doctor_id);
+
+			List<DoctorPrevAppointments> doctorPrevAppointments = new ArrayList<>();
+
+			for(int i=0; i<appointmentsLst.size(); i++) {
+				Appointments presentAppointment = appointmentsLst.get(i);
+				PatientDetails patientDetails = patientsDetailsService.findById(presentAppointment.getDoctorId());
+				DoctorPrevAppointments doctorPrevAppointment = new DoctorPrevAppointments(presentAppointment.getAppointmentDate(), patientDetails.getPatientName(), presentAppointment.isFollowUp(), presentAppointment.getAppointmentId());
+				doctorPrevAppointments.add(doctorPrevAppointment);
+			}
+
+			return new ResponseEntity<>(doctorPrevAppointments, HttpStatus.OK);
+
+		}
+		catch(Exception e){
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

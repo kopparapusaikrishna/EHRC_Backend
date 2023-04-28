@@ -43,6 +43,8 @@ public class DoctorController {
 	@Autowired
 	AppointmentsService appointments_service;
 
+	MeetingController meetingController;
+
     @PutMapping("/DoctorAvailability")
     public ResponseEntity<Integer> change_status(@RequestBody DoctorAvailable doctor) {
         try {
@@ -136,6 +138,7 @@ public class DoctorController {
 				doctorLogin = doctor_login_service.save(doctorLogin);
 
 				ans = "Success";
+				meetingController.updateLists(doctorDetails.getDoctorId(), doctorDetails.getDepartmentName());
 			}
 			else
 				ans = "Failed. Email Id is already existing.";

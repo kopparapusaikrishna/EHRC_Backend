@@ -264,14 +264,14 @@ public class DoctorController {
 			List<Appointments> appointmentsLst =  appointments_service.findById(doctor_id);
 
 			List<DoctorPrevAppointments> doctorPrevAppointments = new ArrayList<>();
-
+			System.out.println("Work");
 			for(int i=0; i<appointmentsLst.size(); i++) {
 				Appointments presentAppointment = appointmentsLst.get(i);
-				PatientDetails patientDetails = patientsDetailsService.findById(presentAppointment.getDoctorId());
+				PatientDetails patientDetails = patientsDetailsService.findById(presentAppointment.getPatientId());
 				DoctorPrevAppointments doctorPrevAppointment = new DoctorPrevAppointments(presentAppointment.getAppointmentDate(), patientDetails.getPatientName(), presentAppointment.isFollowUp(), presentAppointment.getAppointmentId());
 				doctorPrevAppointments.add(doctorPrevAppointment);
 			}
-
+			System.out.println("Work");
 			return new ResponseEntity<>(doctorPrevAppointments, HttpStatus.OK);
 
 		}

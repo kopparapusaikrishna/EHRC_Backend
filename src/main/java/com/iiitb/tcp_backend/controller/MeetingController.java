@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.iiitb.tcp_backend.model.PatientDetails;
+import com.iiitb.tcp_backend.service.PatientsDetailsService;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +27,9 @@ public class MeetingController {
 
 //    @Autowired
 //    PatientRecordService patient_record_service;
+
+    @Autowired
+    PatientsDetailsService patientsDetailsService;
 
     HashMap<String, Queue<Integer>> global_list;  // Dep_name: global_queue for that dep
 
@@ -42,15 +47,18 @@ public class MeetingController {
         present_doctor_patient = new HashMap<>();
     }
 
-    @PostMapping ("/patientChannelGlobal")
-    public ResponseEntity<String> addPatientToGlobal(@RequestParam String dept_name, @RequestParam int patient_id) {
+    @GetMapping("/patientChannelGlobal")
+    public ResponseEntity<String> addPatientToGlobal(@RequestParam String patient_id, @RequestParam String dept_name) {
         try {
             System.out.println("Inside Add Patient to a Department");
-            String channel_name = Integer.toString(patient_id);
-            patient_channel.put(patient_id, channel_name);
-
+            int p_id = Integer.parseInt(patient_id);
+            String channel_name = Integer.toString(p_id);
+            patient_channel.put(p_id, channel_name);
+            if (global_list.containsKey(dept_name) == false) {
+                global_list.put(dept_name, new ArrayDeque<Integer>());
+            }
             Queue<Integer> dept_queue = global_list.get(dept_name);
-            dept_queue.add(patient_id);
+            dept_queue.add(p_id);
             global_list.put(dept_name, dept_queue);
 
             System.out.println(global_list.toString());
@@ -61,12 +69,14 @@ public class MeetingController {
         }
     }
 
-    @PostMapping ("/AddToLocal")
+    @PostMapping("/AddToLocal")
     public ResponseEntity<String> addPatientToLocal(@RequestParam int patient_id, @RequestParam int doctor_id) {
         try {
             System.out.println("Inside Add Patient to a Doctor");
             String ans = "";
-
+            if (doctor_list.containsKey(doctor_id) == false) {
+                doctor_list.put(doctor_id, new ArrayDeque<Integer>());
+            }
             Queue<Integer> doctor_queue = doctor_list.get(doctor_id);
             doctor_queue.add(patient_id);
             doctor_list.put(doctor_id, doctor_queue);
@@ -80,16 +90,16 @@ public class MeetingController {
     }
 
 
-    @PostMapping ("/doctorChannel")
-    public ResponseEntity<String> getDoctorChannel(@PathVariable int doctor_id, @PathVariable String dept_name) {
+    @GetMapping("/doctorChannel")
+    public ResponseEntity<String> getDoctorChannel(@RequestParam String doctor_id, @RequestParam String dept_name) {
         try {
             System.out.println("Inside Get ChannelId For Doctor");
-
+            int d_id = Integer.parseInt(doctor_id);
             Queue<Integer> dept_queue = global_list.get(dept_name);
             int patient_id = dept_queue.poll();
             global_list.put(dept_name, dept_queue);
 
-            present_doctor_patient.put(doctor_id, patient_id);
+            present_doctor_patient.put(d_id, patient_id);
 
             String channel_name = patient_channel.get(patient_id);
 
@@ -98,6 +108,23 @@ public class MeetingController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("patientDetails")
+    public ResponseEntity<PatientDetails> getPatientCurrentlyBeingVisited(@RequestParam String doctor_id) {
+        try {
+
+            int d_id = Integer.parseInt(doctor_id);
+            System.out.println("Inside Get Patient Details Meeting");
+
+            int patient_id = present_doctor_patient.get(d_id);
+
+            PatientDetails patientDetails = patientsDetailsService.findById(patient_id);
+
+            return new ResponseEntity<>(patientDetails, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
 
 
 //    @PostMapping ("/patientRecords")
@@ -123,7 +150,6 @@ public class MeetingController {
 //    }
 
 
-
 //    @PostMapping ("/doctorPrescription")
 //    public ResponseEntity<String> postPatientDetails(ArrayList<HashMap<String, String>>) {
 //        try {
@@ -144,16 +170,18 @@ public class MeetingController {
 //    }
 
 
-
-    public void updateLists(int doctor_id, String dept_name) {
-        System.out.println("Inside update lists");
-        doctor_list.put(doctor_id, new ArrayDeque<>());
-
-        present_doctor_patient.put(doctor_id, null);
-        if(global_list.containsKey(dept_name) == false) {
-            global_list.put(dept_name, new ArrayDeque<>());
-        }
-    }
+//    public void updateLists(int doctor_id, String dept_name) {
+//        System.out.println("Inside update lists");
+//        doctor_list.put(doctor_id, new ArrayDeque<>());
+//
+//        present_doctor_patient.put(doctor_id, null);
+//        if(global_list.containsKey(dept_name) == false) {
+//            global_list.put(dept_name, new ArrayDeque<>());
+//        }
+//
+//        System.out.println(doctor_list.toString());
+//
+//    }
 
 
 //    @GetMapping("/Testing")
@@ -209,4 +237,5 @@ public class MeetingController {
 //        return "Client IP Address: " + ipAddress;
 //    }
 
+    }
 }

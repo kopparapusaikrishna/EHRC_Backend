@@ -20,6 +20,13 @@ public class AppointmentsService {
     @Autowired
     private AppointmentsRepository repo;
 
+    public Appointments save(Appointments appointments) {
+        //System.out.println(movement.getDoctorId());
+        repo.save(appointments);
+        //System.out.println(movement.getDoctorId());--
+        return appointments;
+    }
+
     public List<Appointments> findById(int id)
     {
         return repo.findByDoctorId(id);

@@ -1,15 +1,14 @@
 package com.iiitb.tcp_backend.controller;
 
-import java.sql.Date;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Queue;
 
-import com.iiitb.tcp_backend.clientmodels.Doctor;
-import com.iiitb.tcp_backend.model.DoctorDetails;
-import com.iiitb.tcp_backend.model.PatientRecord;
+import java.sql.Date;
+
 //import com.iiitb.tcp_backend.service.PatientRecordService;
+import com.iiitb.tcp_backend.model.Appointments;
+import com.iiitb.tcp_backend.service.AppointmentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +17,6 @@ import com.iiitb.tcp_backend.model.PatientDetails;
 import com.iiitb.tcp_backend.service.PatientsDetailsService;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -30,6 +27,9 @@ public class MeetingController {
 
     @Autowired
     PatientsDetailsService patientsDetailsService;
+
+    @Autowired
+    AppointmentsService appointmentsService;
 
     HashMap<String, Queue<Integer>> global_list;  // Dep_name: global_queue for that dep
 
@@ -109,7 +109,7 @@ public class MeetingController {
         }
     }
 
-    @GetMapping("patientDetails")
+    @GetMapping("/patientDetails")
     public ResponseEntity<PatientDetails> getPatientCurrentlyBeingVisited(@RequestParam String doctor_id) {
         try {
 
@@ -125,49 +125,47 @@ public class MeetingController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
+    }
 
 
-//    @PostMapping ("/patientRecords")
-//    public ResponseEntity<Integer> postPatientDetails(@RequestBody HashMap<String, String> patient_records) {
-//        try {
-//            System.out.println("Inside Post Patient Records");
-//
-//            int weight = Integer.parseInt(patient_records.get("weight"));
-//            String bp = patient_records.get("bp");
-//            int temp = Integer.parseInt(patient_records.get("temperature"));
-//            int patient_id = Integer.parseInt((patient_records.get("patient_id")));
-//
-//            PatientRecord patientRecord = new PatientRecord(patient_id, weight, temp, bp);
-//
-//            patientRecord = patient_record_service.save(patientRecord);
-//
-//            int ans = patientRecord.getPatientId();
-//
-//            return new ResponseEntity<>(ans, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    @PostMapping("/addAppointmentDetails")
+    public ResponseEntity<String> postAppointmentDetails(@RequestBody HashMap<String, String> map) {
+        try {
+            System.out.println("Inside add appointment details");
 
+            int weight = Integer.parseInt(map.get("weight"));
 
-//    @PostMapping ("/doctorPrescription")
-//    public ResponseEntity<String> postPatientDetails(ArrayList<HashMap<String, String>>) {
-//        try {
-//            System.out.println("Inside Get ChannelId For Doctor");
-//
-//            Queue<Integer> dept_queue = global_list.get(dept_name);
-//            int patient_id = dept_queue.poll();
-//            global_list.put(dept_name, dept_queue);
-//
-//            present_doctor_patient.put(doctor_id, patient_id);
-//
-//            String channel_name = patient_channel.get(patient_id);
-//
-//            return new ResponseEntity<>(channel_name, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+            int doctor_id = Integer.parseInt(map.get("doctor_id"));
+
+            int patient_id = present_doctor_patient.get(doctor_id);
+
+            String bp = map.get("bp");
+
+            int temp = Integer.parseInt(map.get("temperature"));
+
+            String prescripion = map.get("prescription");
+
+            boolean follow_up;
+
+            if (map.get("follow_up").equals("Yes")) {
+                follow_up = true;
+            } else {
+                follow_up = false;
+            }
+
+            Date followup_date = Date.valueOf(map.get("followup_date"));
+
+            Date date = new java.sql.Date(System.currentTimeMillis());
+
+            Appointments appointments = new Appointments(doctor_id, patient_id, date, follow_up, followup_date, prescripion, weight, temp, bp);
+
+            appointments = appointmentsService.save(appointments);
+
+            return new ResponseEntity<>("Success", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 
 //    public void updateLists(int doctor_id, String dept_name) {
@@ -237,5 +235,4 @@ public class MeetingController {
 //        return "Client IP Address: " + ipAddress;
 //    }
 
-    }
 }

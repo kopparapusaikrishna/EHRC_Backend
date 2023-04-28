@@ -1,6 +1,10 @@
 package com.iiitb.tcp_backend.controller;
+import com.iiitb.tcp_backend.clientmodels.PatientPrevAppointments;
 import com.iiitb.tcp_backend.clientmodels.Profile;
+import com.iiitb.tcp_backend.model.Appointments;
+import com.iiitb.tcp_backend.model.DoctorDetails;
 import com.iiitb.tcp_backend.model.PatientDetails;
+import com.iiitb.tcp_backend.service.AppointmentsService;
 import com.iiitb.tcp_backend.service.DoctorDetailsService;
 import com.iiitb.tcp_backend.service.PatientLoginService;
 
@@ -24,6 +28,12 @@ public class PatientController {
 
     @Autowired
     PatientsDetailsService patient_details_service;
+
+    @Autowired
+    AppointmentsService appointmentsService;
+
+    @Autowired
+    DoctorDetailsService doctorDetailsService;
 
     @GetMapping("/PatientDepartment")
     public ResponseEntity<List<String>> change_status() {
@@ -167,8 +177,30 @@ public class PatientController {
         catch(Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
+    @GetMapping("/previousAppointmentsList")
+    public ResponseEntity<List<PatientPrevAppointments>> getPrevAppointmentsLst(@RequestParam int patient_id) {
+        try
+        {
+            System.out.println("inside previousAppointmentsList");
+            List<Appointments> appointmentsLst =  appointmentsService.findByPatientId(patient_id);
 
+            List<PatientPrevAppointments> patientPrevAppointments = new ArrayList<>();
+
+            for(int i=0; i<appointmentsLst.size(); i++) {
+                Appointments presentAppointment = appointmentsLst.get(i);
+                DoctorDetails doctorDetails = doctorDetailsService.findById(presentAppointment.getDoctorId());
+                PatientPrevAppointments patientPrevAppointment = new PatientPrevAppointments(presentAppointment.getAppointmentDate(), doctorDetails.getDepartmentName(), doctorDetails.getDoctorName(), presentAppointment.getAppointmentId());
+                patientPrevAppointments.add(patientPrevAppointment);
+            }
+
+            return new ResponseEntity<>(patientPrevAppointments, HttpStatus.OK);
+
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

@@ -31,6 +31,11 @@ public class AppointmentsService {
     {
         return repo.findByDoctorId(id);
     }
+
+    public List<Appointments> findByPatientId(int id)
+    {
+        return repo.findByPatientId(id);
+    }
     public List<Appointments> getAppointments(Date start_date, Date end_date, int doctor_id)
     {
         return repo.getAppointments(start_date, end_date, doctor_id);

@@ -8,19 +8,19 @@ public class PatientPrevAppointments {
     private String doctor_name;
     private int appointment_id;
 
-    public PatientPrevAppointments(Date appointmemt_date, String doctor_dept, String doctor_name, int appointment_id) {
-        this.appointment_date = appointmemt_date;
+    public PatientPrevAppointments(Date appointment_date, String doctor_dept, String doctor_name, int appointment_id) {
+        this.appointment_date = appointment_date;
         this.doctor_dept = doctor_dept;
         this.doctor_name = doctor_name;
         this.appointment_id = appointment_id;
     }
 
-    public Date getAppointmemt_date() {
+    public Date getAppointment_date() {
         return appointment_date;
     }
 
-    public void setAppointmemt_date(Date appointmemt_date) {
-        this.appointment_date = appointmemt_date;
+    public void setAppointment_date(Date appointment_date) {
+        this.appointment_date = appointment_date;
     }
 
     public String getDoctor_dept() {

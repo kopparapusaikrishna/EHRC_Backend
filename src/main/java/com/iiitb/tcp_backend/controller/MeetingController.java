@@ -83,9 +83,9 @@ public class MeetingController {
     }
 
     @GetMapping("/patientChannelLocal/Same")
-    public ResponseEntity<String> addPatientToLocal(@RequestParam int appointment_id) {
+    public ResponseEntity<String> addPatientToLocalSame(@RequestParam int appointment_id) {
         try {
-            System.out.println("Inside Add Patient to Local Queue");
+            System.out.println("Inside Add Patient to Local Queue Same");
 
             Appointments appointment = appointmentsService.findByAppointmentId(appointment_id);
 
@@ -105,6 +105,34 @@ public class MeetingController {
             doctor_list.put(doctor_id, doctor_queue);
 
             System.out.println(doctor_list.toString());
+
+            return new ResponseEntity<>(channel_name, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/patientChannelLocal/Different")
+    public ResponseEntity<String> addPatientToLocalDifferent(@RequestParam int appointment_id, @RequestParam String dept_name) {
+        try {
+            System.out.println("Inside Add Patient to Local Queue Different");
+
+            Appointments appointment = appointmentsService.findByAppointmentId(appointment_id);
+
+            int patient_id = appointment.getPatientId();
+
+            String channel_name = Integer.toString(patient_id);
+
+            if (global_list.containsKey(dept_name) == false) {
+                global_list.put(dept_name, new ArrayDeque<Queue_item>());
+            }
+
+            Queue<Queue_item> dept_queue = global_list.get(dept_name);
+            Queue_item queueItem = new Queue_item(patient_id, appointment_id);
+            dept_queue.add(queueItem);
+            global_list.put(dept_name, dept_queue);
+
+            System.out.println(global_list.toString());
 
             return new ResponseEntity<>(channel_name, HttpStatus.OK);
         } catch (Exception e) {

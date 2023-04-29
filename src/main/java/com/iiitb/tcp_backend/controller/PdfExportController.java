@@ -33,7 +33,7 @@ public class PdfExportController {
         ByteArrayInputStream bis = databasePdfService.prescriptionPDFReport(appointment);
         System.out.println("below");
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=prescription.pdf");
+        headers.add("Content-Disposition", "attachment; filename=prescription.pdf");
 
         return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(bis));

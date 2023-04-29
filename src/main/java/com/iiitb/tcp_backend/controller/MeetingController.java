@@ -82,7 +82,7 @@ public class MeetingController {
         }
     }
 
-    @PostMapping("/patientChannelLocal")
+    @GetMapping("/patientChannelLocal/Same")
     public ResponseEntity<String> addPatientToLocal(@RequestParam int appointment_id) {
         try {
             System.out.println("Inside Add Patient to Local Queue");
@@ -119,6 +119,11 @@ public class MeetingController {
             System.out.println("Inside Get ChannelId For Doctor");
 
             Queue<Queue_item> dept_queue = global_list.get(dept_name);
+            if(doctor_list.containsKey(doctor_id) == false)
+            {
+                System.out.println("Hello local");
+                doctor_list.put(doctor_id,new ArrayDeque<Queue_item>());
+            }
             Queue<Queue_item> doctor_queue = doctor_list.get(doctor_id);
 
             if (from_local_or_global.containsKey(doctor_id) == false) {
@@ -127,17 +132,24 @@ public class MeetingController {
 
             String channel_name;
             Queue_item queueItem;
-
+            System.out.println(dept_queue.size());
+            System.out.println(doctor_queue.size());
             if(dept_queue.size() != 0 && doctor_queue.size() == 0) {
+                System.out.println("In global");
                 queueItem = dept_queue.poll();
                 int patient_id = queueItem.getPatient_id();
+                System.out.println("1");
                 global_list.put(dept_name, dept_queue);
                 present_doctor_patient.put(doctor_id, patient_id);
+                System.out.println("2");
                 channel_name = patient_channel.get(patient_id);
+                System.out.println("3");
                 from_local_or_global.put(doctor_id, 0);
+                System.out.println("Out Global");
             }
 
             else if(dept_queue.size() == 0 && doctor_queue.size() !=0) {
+                System.out.println("In local");
                 queueItem = doctor_queue.poll();
                 int patient_id = queueItem.getPatient_id();
                 doctor_list.put(doctor_id, doctor_queue);

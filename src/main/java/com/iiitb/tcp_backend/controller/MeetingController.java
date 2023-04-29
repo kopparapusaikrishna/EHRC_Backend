@@ -98,7 +98,7 @@ public class MeetingController {
                 doctor_list.put(doctor_id, new ArrayDeque<Queue_item>());
             }
 
-
+            patient_channel.put(patient_id, channel_name);
             Queue<Queue_item> doctor_queue = doctor_list.get(doctor_id);
             Queue_item queueItem = new Queue_item(patient_id, appointment_id);
             doctor_queue.add(queueItem);
@@ -122,6 +122,8 @@ public class MeetingController {
             int patient_id = appointment.getPatientId();
 
             String channel_name = Integer.toString(patient_id);
+
+            patient_channel.put(patient_id, channel_name);
 
             if (global_list.containsKey(dept_name) == false) {
                 global_list.put(dept_name, new ArrayDeque<Queue_item>());

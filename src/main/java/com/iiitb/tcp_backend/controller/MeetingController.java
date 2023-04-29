@@ -7,8 +7,10 @@ import java.util.Queue;
 import java.sql.Date;
 
 //import com.iiitb.tcp_backend.service.PatientRecordService;
+import com.iiitb.tcp_backend.clientmodels.DoctorMeetData;
 import com.iiitb.tcp_backend.model.Appointments;
 import com.iiitb.tcp_backend.service.AppointmentsService;
+import com.iiitb.tcp_backend.service.DoctorDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import com.iiitb.tcp_backend.model.PatientDetails;
 import com.iiitb.tcp_backend.service.PatientsDetailsService;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.criteria.CriteriaBuilder;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -31,13 +34,21 @@ public class MeetingController {
     @Autowired
     AppointmentsService appointmentsService;
 
-    HashMap<String, Queue<Integer>> global_list;  // Dep_name: global_queue for that dep
+    @Autowired
+    DoctorDetailsService doctorDetailsService;
 
-    HashMap<Integer, Queue<Integer>> doctor_list;  // Doctor_id: local_queue for that doctor
+    HashMap<String, Queue<Queue_item>> global_list;  // Dep_name: global_queue for that dep
+
+    HashMap<Integer, Queue<Queue_item>> doctor_list;  // Doctor_id: local_queue for that doctor
 
     HashMap<Integer, String> patient_channel;
 
     HashMap<Integer, Integer> present_doctor_patient; // doctor_id: present_patient_id
+
+//    HashMap<Integer, Integer> doctor_ratios; // doctor_id: ratio
+
+    HashMap<Integer, Integer> from_local_or_global; // doctor_id: (local-0 or global-1)
+
 
     @PostConstruct
     public void initialize() {
@@ -45,20 +56,22 @@ public class MeetingController {
         doctor_list = new HashMap<>();
         patient_channel = new HashMap<>();
         present_doctor_patient = new HashMap<>();
+        from_local_or_global = new HashMap<>();
     }
 
     @GetMapping("/patientChannelGlobal")
     public ResponseEntity<String> addPatientToGlobal(@RequestParam String patient_id, @RequestParam String dept_name) {
         try {
-            System.out.println("Inside Add Patient to a Department");
+            System.out.println("Inside Add Patient to a Global Queue");
             int p_id = Integer.parseInt(patient_id);
             String channel_name = Integer.toString(p_id);
             patient_channel.put(p_id, channel_name);
             if (global_list.containsKey(dept_name) == false) {
-                global_list.put(dept_name, new ArrayDeque<Integer>());
+                global_list.put(dept_name, new ArrayDeque<Queue_item>());
             }
-            Queue<Integer> dept_queue = global_list.get(dept_name);
-            dept_queue.add(p_id);
+            Queue<Queue_item> dept_queue = global_list.get(dept_name);
+            Queue_item queueItem = new Queue_item(p_id, -1);
+            dept_queue.add(queueItem);
             global_list.put(dept_name, dept_queue);
 
             System.out.println(global_list.toString());
@@ -69,45 +82,119 @@ public class MeetingController {
         }
     }
 
-    @PostMapping("/AddToLocal")
-    public ResponseEntity<String> addPatientToLocal(@RequestParam int patient_id, @RequestParam int doctor_id) {
+    @PostMapping("/patientChannelLocal")
+    public ResponseEntity<String> addPatientToLocal(@RequestParam int appointment_id) {
         try {
-            System.out.println("Inside Add Patient to a Doctor");
-            String ans = "";
+            System.out.println("Inside Add Patient to Local Queue");
+
+            Appointments appointment = appointmentsService.findByAppointmentId(appointment_id);
+
+             int doctor_id = appointment.getDoctorId();
+             int patient_id = appointment.getPatientId();
+
+            String channel_name = Integer.toString(patient_id);
+
             if (doctor_list.containsKey(doctor_id) == false) {
-                doctor_list.put(doctor_id, new ArrayDeque<Integer>());
+                doctor_list.put(doctor_id, new ArrayDeque<Queue_item>());
             }
-            Queue<Integer> doctor_queue = doctor_list.get(doctor_id);
-            doctor_queue.add(patient_id);
+
+
+            Queue<Queue_item> doctor_queue = doctor_list.get(doctor_id);
+            Queue_item queueItem = new Queue_item(patient_id, appointment_id);
+            doctor_queue.add(queueItem);
             doctor_list.put(doctor_id, doctor_queue);
 
             System.out.println(doctor_list.toString());
-            ans = "Success";
-            return new ResponseEntity<>(ans, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-    @GetMapping("/doctorChannel")
-    public ResponseEntity<String> getDoctorChannel(@RequestParam String doctor_id, @RequestParam String dept_name) {
-        try {
-            System.out.println("Inside Get ChannelId For Doctor");
-            int d_id = Integer.parseInt(doctor_id);
-            Queue<Integer> dept_queue = global_list.get(dept_name);
-            int patient_id = dept_queue.poll();
-            global_list.put(dept_name, dept_queue);
-
-            present_doctor_patient.put(d_id, patient_id);
-
-            String channel_name = patient_channel.get(patient_id);
 
             return new ResponseEntity<>(channel_name, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+//    local-0 or global-1
+    @GetMapping("/doctorChannel")
+    public ResponseEntity<DoctorMeetData> getDoctorChannel(@RequestParam int doctor_id, @RequestParam String dept_name) {
+        try {
+            System.out.println("Inside Get ChannelId For Doctor");
+
+            Queue<Queue_item> dept_queue = global_list.get(dept_name);
+            Queue<Queue_item> doctor_queue = doctor_list.get(doctor_id);
+
+            if (from_local_or_global.containsKey(doctor_id) == false) {
+                from_local_or_global.put(doctor_id, 0);
+            }
+
+            String channel_name;
+            Queue_item queueItem;
+
+            if(dept_queue.size() != 0 && doctor_queue.size() == 0) {
+                queueItem = dept_queue.poll();
+                int patient_id = queueItem.getPatient_id();
+                global_list.put(dept_name, dept_queue);
+                present_doctor_patient.put(doctor_id, patient_id);
+                channel_name = patient_channel.get(patient_id);
+                from_local_or_global.put(doctor_id, 0);
+            }
+
+            else if(dept_queue.size() == 0 && doctor_queue.size() !=0) {
+                queueItem = doctor_queue.poll();
+                int patient_id = queueItem.getPatient_id();
+                doctor_list.put(doctor_id, doctor_queue);
+                present_doctor_patient.put(doctor_id, patient_id);
+                channel_name = patient_channel.get(patient_id);
+                from_local_or_global.put(doctor_id, 1);
+            }
+
+            else {
+                if(from_local_or_global.get(doctor_id) == 1) {
+                    queueItem = dept_queue.poll();
+                    int patient_id = queueItem.getPatient_id();
+                    global_list.put(dept_name, dept_queue);
+                    present_doctor_patient.put(doctor_id, patient_id);
+                    channel_name = patient_channel.get(patient_id);
+                    from_local_or_global.put(doctor_id, 0);
+                }
+                else{
+                    queueItem = doctor_queue.poll();
+                    int patient_id = queueItem.getPatient_id();
+                    doctor_list.put(doctor_id, doctor_queue);
+                    present_doctor_patient.put(doctor_id, patient_id);
+                    channel_name = patient_channel.get(patient_id);
+                    from_local_or_global.put(doctor_id, 1);
+                }
+            }
+
+            DoctorMeetData doctorMeetData = new DoctorMeetData(channel_name, queueItem.getPrev_appointment_id());
+
+            return new ResponseEntity<>(doctorMeetData, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+//    private String scheduling(Queue<Integer> dept_queue, Queue<Integer> doctor_queue, int doctor_id, String dept_name) {
+//
+//        int total = sum(dept_queue) +sum(doctor_queue);
+//
+//        int doctors_in_department = dept_queue.size() + doctor_queue.size();
+//
+//        int no_of_active_doctors = doctorDetailsService.searchDepartment(dept_name);
+//
+//        int k = total/no_of_active_doctors;
+//
+//        return "Global Local";
+//    }
+//
+//    private int sum(Queue<Integer> q) {
+//        int sum = 0;
+//        while (!q.isEmpty()) {
+//            int n = q.poll();
+//            sum += n;
+//        }
+//        return sum;
+//    }
+
 
     @GetMapping("/patientDetails")
     public ResponseEntity<PatientDetails> getPatientCurrentlyBeingVisited(@RequestParam String doctor_id) {

@@ -27,6 +27,8 @@ public class AppointmentsService {
         return appointments;
     }
 
+    public Appointments findByAppointmentId(int id) { return repo.findByAppointmentId(id);}
+
     public List<Appointments> findById(int id)
     {
         return repo.findByDoctorId(id);

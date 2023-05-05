@@ -147,7 +147,10 @@ public class MeetingController {
     public ResponseEntity<DoctorMeetData> getDoctorChannel(@RequestParam int doctor_id, @RequestParam String dept_name) {
         try {
             System.out.println("Inside Get ChannelId For Doctor");
-
+            if(global_list.containsKey(dept_name) == false)
+            {
+                global_list.put(dept_name,new ArrayDeque<>());
+            }
             Queue<Queue_item> dept_queue = global_list.get(dept_name);
             if(doctor_list.containsKey(doctor_id) == false)
             {
@@ -160,10 +163,14 @@ public class MeetingController {
                 from_local_or_global.put(doctor_id, 0);
             }
 
+            System.out.println("Hello");
+
             String channel_name;
             Queue_item queueItem;
             System.out.println(dept_queue.size());
+            System.out.println("Hello-1112");
             System.out.println(doctor_queue.size());
+            System.out.println("Hello-111");
             if(dept_queue.size() != 0 && doctor_queue.size() == 0) {
                 System.out.println("In global");
                 queueItem = dept_queue.poll();

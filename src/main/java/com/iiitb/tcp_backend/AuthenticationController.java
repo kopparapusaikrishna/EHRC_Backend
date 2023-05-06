@@ -23,7 +23,7 @@ import com.iiitb.tcp_backend.AuthenticationService;
 import com.iiitb.tcp_backend.service.PatientLoginService;
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/Patient")
+
 
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
@@ -42,7 +42,7 @@ public class AuthenticationController {
     }
 
     @CrossOrigin
-    @GetMapping("/sendOTP")
+    @GetMapping("Patient/sendOTP")
     public int send_otp(@RequestParam("phone_number") String mobile_number)
     {
         System.out.println("Hello?");
@@ -96,8 +96,8 @@ public class AuthenticationController {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/Patient/verifyOTP").permitAll()
-                .antMatchers("/Patient/sendOTP").permitAll().antMatchers("/Doctor").permitAll().antMatchers("/Admin/{username}{password}").permitAll();
-                //.anyRequest().authenticated();
+                .antMatchers("/Doctor","/Patient/sendOTP","/Admin").permitAll()
+                .anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());
 

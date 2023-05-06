@@ -91,15 +91,15 @@ public class DoctorController {
 		//return auth;
 	}*/
 
-	@GetMapping("/Doctor/{username}/{password}")
-	public ResponseEntity Doctorlogin(@PathVariable("username") String username1,@PathVariable("password") String password){
-		DoctorLogin s = doctor_login_service.findByemail(username1);
+	@GetMapping("/Doctor")
+	public ResponseEntity Doctorlogin(@RequestParam String username,@RequestParam String password){
+		DoctorLogin s = doctor_login_service.findByemail(username);
 		if(s!=null && s.getDoctorPassword().equals(password)) {
-			//System.out.println("entered");
-			final UserDetails userDetails = userDetailsService.loadDoctorByUsername(username1,password);
+			System.out.println("entered");
+			final UserDetails userDetails = userDetailsService.loadDoctorByUsername(username,password);
 
 			final String jwtToken = tokenManager.generateJwtToken(userDetails);
-			//System.out.println("hellso");
+			System.out.println("hellso");
 			//System.out.println(jwtToken);
 			//System.out.println());
 			return ResponseEntity.ok(new JwtResponseModel(jwtToken));

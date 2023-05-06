@@ -38,12 +38,12 @@ public class AdminController {
     @Autowired
     TokenManager tokenManager;
 
-    @GetMapping("/Admin/{username}/{password}")
-    public ResponseEntity Adminlogin(@PathVariable("username") String username1,@PathVariable("password") String password){
-        AdminLogin s = admin_login_service.findByemail(username1);
+    @GetMapping("/Admin")
+    public ResponseEntity Adminlogin(@RequestParam String username,@RequestParam String password){
+        AdminLogin s = admin_login_service.findByemail(username);
         if(s!=null && s.getAdminPassword().equals(password)) {
             //System.out.println("entered");
-            final UserDetails userDetails = userDetailsService.loadAdminByUsername(username1,password);
+            final UserDetails userDetails = userDetailsService.loadAdminByUsername(username,password);
 
             final String jwtToken = tokenManager.generateJwtToken(userDetails);
             //System.out.println("hellso");

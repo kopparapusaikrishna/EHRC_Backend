@@ -2,6 +2,7 @@ package com.iiitb.tcp_backend.service;
 
 import com.iiitb.tcp_backend.clientmodels.DepartmentStats;
 import com.iiitb.tcp_backend.repository.DoctorDetailsRepository;
+import com.iiitb.tcp_backend.repository.StatisticsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,9 @@ import java.util.List;
 public class statisticsService {
     @Autowired
     private DoctorDetailsRepository repo;
+
+    @Autowired
+    StatisticsRepository stat_repo;
 
     public List<String> getDepartmentName(String start_date, String end_Date){
         System.out.println("Hi");
@@ -32,6 +36,14 @@ public class statisticsService {
 
     public int getDoctorCount(String department_name){
         return repo.getDoctorCount(department_name);
+    }
+
+    public int getAppointmentsCount(){
+        return stat_repo.getAppointmentCount();
+    }
+
+    public int getDoctorsCount(){
+        return stat_repo.getDocCount();
     }
 
 }

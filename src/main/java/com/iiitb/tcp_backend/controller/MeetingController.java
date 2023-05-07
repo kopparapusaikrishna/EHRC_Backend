@@ -1,8 +1,6 @@
 package com.iiitb.tcp_backend.controller;
 
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Queue;
+import java.util.*;
 
 import java.sql.Date;
 
@@ -303,6 +301,32 @@ public class MeetingController {
         }
     }
 
+    @GetMapping("/doctorStats")
+    public ResponseEntity<List<Integer>> doctorStats(@RequestParam int doctor_id, @RequestParam String dept_name) {
+        try {
+            List<Integer> ans = new ArrayList<Integer>();
+            int globval = -1;
+            int locval = -1;
+            System.out.println("Inside Doctor Stats");
+            if (!global_list.containsKey(dept_name)) {
+                global_list.put(dept_name, new ArrayDeque<Queue_item>());
+            }
+            Queue<Queue_item> dept_queue = global_list.get(dept_name);
+            globval = dept_queue.size();
+
+            if(!doctor_list.containsKey(doctor_id)){
+                doctor_list.put(doctor_id,new ArrayDeque<Queue_item>());
+            }
+            locval = doctor_list.get(doctor_id).size();
+            ans.add(globval);
+            ans.add(locval);
+
+            return new ResponseEntity<>(ans, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 //    public void updateLists(int doctor_id, String dept_name) {
 //        System.out.println("Inside update lists");
@@ -315,60 +339,6 @@ public class MeetingController {
 //
 //        System.out.println(doctor_list.toString());
 //
-//    }
-
-
-//    @GetMapping("/Testing")
-//    public ResponseEntity<String> StartMeeting(HttpServletRequest request) {
-//        try {
-//            String ans = "sad";
-//            String ipAddress = request.getHeader("X-Forwarded-For"); // For obtaining IP address through reverse proxy server
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("Proxy-Client-IP");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("WL-Proxy-Client-IP");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("HTTP_X_FORWARDED_FOR");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("HTTP_X_FORWARDED");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("HTTP_X_CLUSTER_CLIENT_IP");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("HTTP_CLIENT_IP");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("HTTP_FORWARDED_FOR");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("HTTP_FORWARDED");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getHeader("REMOTE_ADDR");
-//            }
-//            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-//                ipAddress = request.getRemoteAddr();
-//            }
-//            // use the ipAddress variable as needed
-//            System.out.println(ipAddress);
-//            return new ResponseEntity<>(ans, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-//    @RequestMapping(value = "/Test", method = RequestMethod.GET)
-//    public String myEndpoint(HttpServletRequest request) {
-//        String ipAddress = request.getHeader("X-FORWARDED-FOR");
-//        if (ipAddress == null) {
-//            ipAddress = request.getRemoteAddr();
-//        }
-//        System.out.println(ipAddress);
-//        return "Client IP Address: " + ipAddress;
 //    }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,6 +52,46 @@ public class StatisticsController {
                 ans.put(i,statService.getDoctorCount(i));
             }
             System.out.println("Hi");
+            return new ResponseEntity<>(ans, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/adminHomeStats")
+    public ResponseEntity<List<Integer>> adminHomeStats() {
+        try {
+            List<Integer> ans = new ArrayList<Integer>();
+            int globval = -1;
+            int locval = -1;
+            System.out.println("Inside Admin Stats");
+
+            globval = statService.getAppointmentsCount();
+            locval = statService.getDoctorsCount();
+
+            ans.add(globval);
+            ans.add(locval);
+
+            return new ResponseEntity<>(ans, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/userHomeStats")
+    public ResponseEntity<List<Integer>> userHomeStats() {
+        try {
+            List<Integer> ans = new ArrayList<Integer>();
+            int globval = -1;
+            int locval = -1;
+            System.out.println("Inside User Home Stats");
+
+            globval = statService.getAppointmentsCount();
+            locval = statService.getDoctorsCount();
+
+            ans.add(globval);
+            ans.add(locval);
+
             return new ResponseEntity<>(ans, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -96,7 +96,7 @@ public class AuthenticationController {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/Patient/verifyOTP").permitAll()
-                .antMatchers("/Doctor","/Patient/sendOTP","/Admin").permitAll()
+                .antMatchers("/Doctor","/Patient/sendOTP","/Admin","/userHomeStats").permitAll()
                 .anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());

@@ -11,6 +11,8 @@ import com.iiitb.tcp_backend.model.Admin;
 import com.iiitb.tcp_backend.model.AdminLogin;
 import com.iiitb.tcp_backend.model.DoctorDetails;
 import com.iiitb.tcp_backend.model.DoctorLogin;
+import com.iiitb.tcp_backend.repository.AdminDetailsRepository;
+import com.iiitb.tcp_backend.repository.DoctorDetailsRepository;
 import com.iiitb.tcp_backend.service.AdminDetailsService;
 import com.iiitb.tcp_backend.service.AdminLoginService;
 
@@ -34,6 +36,8 @@ public class AdminController {
     @Autowired
     AdminDetailsService admin_service;
     @Autowired
+    AdminDetailsRepository adminDetailsRepository;
+    @Autowired
     AdminLoginService admin_login_service;
 
     @Autowired
@@ -44,6 +48,8 @@ public class AdminController {
     @GetMapping("/Admin")
     public ResponseEntity Adminlogin(@RequestParam String username,@RequestParam String password){
         AdminLogin s = admin_login_service.findByemail(username);
+        if (!s.getIsAdminActive())
+            return ResponseEntity.ok(new JwtResponseModel("not"));
         if(s!=null && s.getAdminPassword().equals(password)) {
             //System.out.println("entered");
             final UserDetails userDetails = userDetailsService.loadAdminByUsername(username,password);
@@ -56,7 +62,17 @@ public class AdminController {
         }
         return ResponseEntity.ok(new JwtResponseModel("not"));
     }
-
+    @GetMapping("/admindetails")
+    public ResponseEntity<Admin> getdoctordetails(@RequestParam String email_id){
+        System.out.println(email_id);
+        System.out.println("fgdf");
+        AdminLogin dl=admin_login_service.getadminlogindetails(email_id);
+        Admin dd=adminDetailsRepository.findByAdminId(dl.getAdminId());
+        if (dd!=null){
+            return new ResponseEntity<>(dd,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     @PostMapping("/PostAdminDetails")
     public ResponseEntity<String> addAdmin(@RequestBody AdminDetails admindetails) {
         try {

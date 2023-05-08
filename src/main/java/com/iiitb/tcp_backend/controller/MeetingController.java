@@ -7,6 +7,7 @@ import java.sql.Date;
 //import com.iiitb.tcp_backend.service.PatientRecordService;
 import com.iiitb.tcp_backend.clientmodels.DoctorMeetData;
 import com.iiitb.tcp_backend.model.Appointments;
+import com.iiitb.tcp_backend.repository.PatientDetailsRepository;
 import com.iiitb.tcp_backend.service.AppointmentsService;
 import com.iiitb.tcp_backend.service.DoctorDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,8 @@ public class MeetingController {
 
 //    @Autowired
 //    PatientRecordService patient_record_service;
-
+   @Autowired
+    PatientDetailsRepository patientDetailsRepository;
     @Autowired
     PatientsDetailsService patientsDetailsService;
 
@@ -55,6 +57,25 @@ public class MeetingController {
         patient_channel = new HashMap<>();
         present_doctor_patient = new HashMap<>();
         from_local_or_global = new HashMap<>();
+    }
+    @DeleteMapping("/deletepatients")
+    public ResponseEntity<Void> deletepatients(@RequestParam int doctor_id){
+
+                Queue<Queue_item> qi= doctor_list.get(doctor_id);
+                while(!qi.isEmpty()){
+                    Queue_item q=qi.poll();
+                    int patient_id=q.getPatient_id();
+                    PatientDetails patientDetails=patientDetailsRepository.findByPatientId(patient_id);
+                    doctorDetailsService.sendsms(patientDetails.getPatientPhoneNumber());
+
+                }
+
+
+        
+        if (doctor_list.get(doctor_id)!=null){
+            doctor_list.put(doctor_id,new ArrayDeque<Queue_item>());
+        }
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/patientChannelGlobal")

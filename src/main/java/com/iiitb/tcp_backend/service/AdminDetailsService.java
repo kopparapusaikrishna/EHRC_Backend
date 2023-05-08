@@ -13,7 +13,7 @@ import java.util.List;
 public class AdminDetailsService {
     @Autowired
     private AdminDetailsRepository repo;
-    public Admin findById(String id)
+    public Admin findById(int id)
     {
         return repo.findByAdminId(id);
     }

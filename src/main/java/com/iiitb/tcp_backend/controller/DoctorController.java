@@ -94,6 +94,8 @@ public class DoctorController {
 	@GetMapping("/Doctor")
 	public ResponseEntity Doctorlogin(@RequestParam String username,@RequestParam String password){
 		DoctorLogin s = doctor_login_service.findByemail(username);
+		if (!s.getIsDoctorActive())
+			return ResponseEntity.ok(new JwtResponseModel("not"));
 		if(s!=null && s.getDoctorPassword().equals(password)) {
 			System.out.println("entered");
 			final UserDetails userDetails = userDetailsService.loadDoctorByUsername(username,password);
@@ -115,6 +117,7 @@ public class DoctorController {
 		}
 		return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
 
 
 	@PostMapping ("/PostDoctorDetails")

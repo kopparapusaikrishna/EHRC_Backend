@@ -11,7 +11,7 @@ import java.util.List;
 public interface AdminDetailsRepository extends JpaRepository<Admin, String> {
 
     @Query(value = "SELECT * FROM admin WHERE admin_id = :id", nativeQuery = true)
-    Admin findByAdminId(@Param("id") String id);
+    Admin findByAdminId(@Param("id") int id);
 
     @Query(value = "SELECT * FROM admin", nativeQuery = true)
     List<Admin> getAdmins();

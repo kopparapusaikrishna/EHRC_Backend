@@ -33,7 +33,9 @@ public class AdminLoginService {
         System.out.println("After"+ movement.getAdminId());
         return movement;
     }
-
+    public AdminLogin getadminlogindetails(String email_id){
+        return repo.findByAdminEmail(email_id);
+    }
     public List<AdminLogin> getAdmins()
     {
         return repo.getAdmins();

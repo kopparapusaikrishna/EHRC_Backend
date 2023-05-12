@@ -27,6 +27,7 @@ public class StatisticsController {
             System.out.println(start_date);
             System.out.println(end_date);
             HashMap<String, Integer> ans = new HashMap<String, Integer>();
+            System.out.println("fsfdfddd");
             List<String> stats = statService.getDepartmentName(start_date,end_date);
             System.out.println("Hello");
             for(String i: stats){

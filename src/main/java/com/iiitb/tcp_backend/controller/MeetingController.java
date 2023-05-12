@@ -19,6 +19,7 @@ import com.iiitb.tcp_backend.service.PatientsDetailsService;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.transaction.Transactional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -71,7 +72,7 @@ public class MeetingController {
                 }
 
 
-        
+
         if (doctor_list.get(doctor_id)!=null){
             doctor_list.put(doctor_id,new ArrayDeque<Queue_item>());
         }
@@ -163,18 +164,18 @@ public class MeetingController {
 
 //    local-0 or global-1
     @GetMapping("/doctorChannel")
-    public ResponseEntity<DoctorMeetData> getDoctorChannel(@RequestParam int doctor_id, @RequestParam String dept_name) {
+    public ResponseEntity<DoctorMeetData> getDoctorChannel(@RequestParam int doctor_id, @RequestParam String dept_name, @RequestParam Boolean availability) {
         try {
+
+            String channel_name;
             System.out.println("Inside Get ChannelId For Doctor");
-            if(global_list.containsKey(dept_name) == false)
-            {
-                global_list.put(dept_name,new ArrayDeque<>());
+            if (global_list.containsKey(dept_name) == false) {
+                global_list.put(dept_name, new ArrayDeque<>());
             }
             Queue<Queue_item> dept_queue = global_list.get(dept_name);
-            if(doctor_list.containsKey(doctor_id) == false)
-            {
+            if (doctor_list.containsKey(doctor_id) == false) {
                 System.out.println("Hello local");
-                doctor_list.put(doctor_id,new ArrayDeque<Queue_item>());
+                doctor_list.put(doctor_id, new ArrayDeque<Queue_item>());
             }
             Queue<Queue_item> doctor_queue = doctor_list.get(doctor_id);
 
@@ -184,58 +185,69 @@ public class MeetingController {
 
             System.out.println("Hello");
 
-            String channel_name;
             Queue_item queueItem;
             System.out.println(dept_queue.size());
             System.out.println("Hello-1112");
             System.out.println(doctor_queue.size());
             System.out.println("Hello-111");
-            if(dept_queue.size() != 0 && doctor_queue.size() == 0) {
-                System.out.println("In global");
-                queueItem = dept_queue.poll();
-                int patient_id = queueItem.getPatient_id();
-                System.out.println("1");
-                global_list.put(dept_name, dept_queue);
-                present_doctor_patient.put(doctor_id, patient_id);
-                System.out.println("2");
-                channel_name = patient_channel.get(patient_id);
-                System.out.println("3");
-                from_local_or_global.put(doctor_id, 0);
-                System.out.println("Out Global");
-            }
 
-            else if(dept_queue.size() == 0 && doctor_queue.size() !=0) {
-                System.out.println("In local");
+
+            if(availability == false) {
+                System.out.println("In Only local");
                 queueItem = doctor_queue.poll();
                 int patient_id = queueItem.getPatient_id();
                 doctor_list.put(doctor_id, doctor_queue);
                 present_doctor_patient.put(doctor_id, patient_id);
                 channel_name = patient_channel.get(patient_id);
-                from_local_or_global.put(doctor_id, 1);
+
+                DoctorMeetData doctorMeetData = new DoctorMeetData(channel_name, queueItem.getPrev_appointment_id());
+
+                return new ResponseEntity<>(doctorMeetData, HttpStatus.OK);
             }
 
             else {
-                if(from_local_or_global.get(doctor_id) == 1) {
+                if (dept_queue.size() != 0 && doctor_queue.size() == 0) {
+                    System.out.println("In global");
                     queueItem = dept_queue.poll();
                     int patient_id = queueItem.getPatient_id();
+                    //                    System.out.println("1");
                     global_list.put(dept_name, dept_queue);
                     present_doctor_patient.put(doctor_id, patient_id);
+                    //                    System.out.println("2");
                     channel_name = patient_channel.get(patient_id);
+                    //                    System.out.println("3");
                     from_local_or_global.put(doctor_id, 0);
-                }
-                else{
+                    System.out.println("Out Global");
+                } else if (dept_queue.size() == 0 && doctor_queue.size() != 0) {
+                    System.out.println("In local");
                     queueItem = doctor_queue.poll();
                     int patient_id = queueItem.getPatient_id();
                     doctor_list.put(doctor_id, doctor_queue);
                     present_doctor_patient.put(doctor_id, patient_id);
                     channel_name = patient_channel.get(patient_id);
                     from_local_or_global.put(doctor_id, 1);
+                } else {
+                    if (from_local_or_global.get(doctor_id) == 1) {
+                        queueItem = dept_queue.poll();
+                        int patient_id = queueItem.getPatient_id();
+                        global_list.put(dept_name, dept_queue);
+                        present_doctor_patient.put(doctor_id, patient_id);
+                        channel_name = patient_channel.get(patient_id);
+                        from_local_or_global.put(doctor_id, 0);
+                    } else {
+                        queueItem = doctor_queue.poll();
+                        int patient_id = queueItem.getPatient_id();
+                        doctor_list.put(doctor_id, doctor_queue);
+                        present_doctor_patient.put(doctor_id, patient_id);
+                        channel_name = patient_channel.get(patient_id);
+                        from_local_or_global.put(doctor_id, 1);
+                    }
                 }
+
+                DoctorMeetData doctorMeetData = new DoctorMeetData(channel_name, queueItem.getPrev_appointment_id());
+
+                return new ResponseEntity<>(doctorMeetData, HttpStatus.OK);
             }
-
-            DoctorMeetData doctorMeetData = new DoctorMeetData(channel_name, queueItem.getPrev_appointment_id());
-
-            return new ResponseEntity<>(doctorMeetData, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -282,7 +294,7 @@ public class MeetingController {
         }
     }
 
-
+   @Transactional
     @PostMapping("/addAppointmentDetails")
     public ResponseEntity<String> postAppointmentDetails(@RequestBody HashMap<String, String> map) {
         try {
@@ -347,7 +359,21 @@ public class MeetingController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping("/remindPatient")
+    public ResponseEntity<String> sendRemainderMessage(@RequestParam int appointment_id) {
+        try {
+            System.out.println("Inside Remind Patient Queue Different");
 
+            Appointments appointment = appointmentsService.findByAppointmentId(appointment_id);
+            int patient_id = appointment.getPatientId();
+            PatientDetails patientDetails = patientDetailsRepository.findByPatientId(patient_id);
+            doctorDetailsService.sendReminderMessage(patientDetails.getPatientPhoneNumber());
+
+            return new ResponseEntity<>("Success", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 //    public void updateLists(int doctor_id, String dept_name) {
 //        System.out.println("Inside update lists");

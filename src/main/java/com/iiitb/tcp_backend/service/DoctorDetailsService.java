@@ -26,15 +26,34 @@ public class DoctorDetailsService {
 
     public DoctorDetails save(DoctorDetails movement) {
         //System.out.println(movement.getDoctorId());
-        repo.save(movement);
+        //repo.save(movement);
+        System.out.println(movement.toString());
+        repo.adddoctor(movement.getDoctorName(), movement.getDoctorDob(), movement.getDoctorGender(), movement.getDepartmentName(), movement.getDoctorQualification(), movement.getDoctorClinicAddress(), movement.getDoctorPhoneNumber(),true, movement.getDoctorStartDate());
         //System.out.println(movement.getDoctorId());--
-        return movement;
+        int id=repo.lastdoctordetails();
+        return repo.findByDoctorId(id);
+    }
+    public ResponseEntity<Void> sendReminderMessage(String phone_number){
+        System.out.println("dgdgdgdd");
+        final String ACCOUNT_SID = "AC57e93cf1adf49737c5d591a9aef97f98";
+        final String AUTH_TOKEN = "566dadfee205b72be92c91777e076dff";
+        final String FROM_NUMBER = "+12706322743";
+        System.out.println(phone_number);
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        //System.out.println(md.getMovie_name());
+        final String to="+91"+phone_number;
+
+            System.out.println("dgdgdgdd3");
+            Message.creator(new PhoneNumber(to), new PhoneNumber(FROM_NUMBER), "You have a Follow Up appointment. Please visit your nearby center or Plan a meeting with doctor").create();
+            System.out.println("dgdgdgdd4");
+            return ResponseEntity.ok().build();
+
     }
     public ResponseEntity<Void> sendsms(String phone_number){
         System.out.println("dgdgdgdd");
-        final String ACCOUNT_SID = "ACbcec39040fe22ddea4512e79e24b6c90";
-        final String AUTH_TOKEN = "2445d6bbd53302717d6b41df7d83e147";
-        final String FROM_NUMBER = "+16317693117";
+        final String ACCOUNT_SID = "AC57e93cf1adf49737c5d591a9aef97f98";
+        final String AUTH_TOKEN = "566dadfee205b72be92c91777e076dff";
+        final String FROM_NUMBER = "+12706322743";
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         //System.out.println(md.getMovie_name());
         final String to="+91"+phone_number;
@@ -58,9 +77,9 @@ public class DoctorDetailsService {
     	return repo.getDoctors();
     }
     
-    public int searchDepartment(String department)
+    public int searchDepartment(String department_name)
     {
-        return repo.countDepartment(department);
+        return repo.countDepartment(department_name);
     }
 
 }

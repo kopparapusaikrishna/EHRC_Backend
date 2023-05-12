@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
-
+import javax.transaction.Transactional;
 import com.iiitb.tcp_backend.service.DoctorLoginService;
 import com.iiitb.tcp_backend.service.PatientsDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,17 +47,20 @@ public class DoctorController {
 	@Autowired
 	AppointmentsService appointments_service;
 
+  @Autowired
+  DoctorLoginRepository doctorLoginRepository;
 	@Autowired
 	PatientsDetailsService patientsDetailsService;
-
+	@Transactional
     @PutMapping("/DoctorAvailability")
     public ResponseEntity<Integer> change_status(@RequestBody DoctorAvailable doctor) {
         try {
 			//System.out.println("asdfhj");
             String ans = "";
-            DoctorDetails doc = doctor_service.findById(doctor.getDoctorId());
-            doc.setDoctorAvailability(doctor.isStatus());
-            doctor_service.save(doc);
+            //DoctorDetails doc = doctor_service.findById(doctor.getDoctorId());
+            //doc.setDoctorAvailability(doctor.isStatus());
+			System.out.println("succ");
+            doctorDetailsRepository.updatedoctordetails(doctor.getDoctorId(), doctor.isStatus());
             ans = "Success";
 			System.out.println(ans);
             return new ResponseEntity<>(1, HttpStatus.OK);
@@ -94,6 +97,9 @@ public class DoctorController {
 	@GetMapping("/Doctor")
 	public ResponseEntity Doctorlogin(@RequestParam String username,@RequestParam String password){
 		DoctorLogin s = doctor_login_service.findByemail(username);
+		if(s == null){
+			return ResponseEntity.ok(new JwtResponseModel("not"));
+		}
 		if (!s.getIsDoctorActive())
 			return ResponseEntity.ok(new JwtResponseModel("not"));
 		if(s!=null && s.getDoctorPassword().equals(password)) {
@@ -111,6 +117,7 @@ public class DoctorController {
 	@GetMapping("/doctordetails")
 	public ResponseEntity<DoctorDetails> getdoctordetails(@RequestParam String email_id){
 		DoctorLogin dl=doctor_login_service.getdoctorlogindetails(email_id);
+		System.out.println("hit");
 		DoctorDetails dd=doctorDetailsRepository.findByDoctorId(dl.getDoctorId());
 		if (dd!=null){
 			return new ResponseEntity<>(dd,HttpStatus.OK);
@@ -119,15 +126,15 @@ public class DoctorController {
 	}
 
 
-
+   @Transactional
 	@PostMapping ("/PostDoctorDetails")
 	public ResponseEntity<String> addDoctor(@RequestBody Doctor doctor) {
 		try {
-			//System.out.println("asdfhj");
+
 			String ans = "";
 			int flag = 1;
 			List<DoctorLogin> doctorLogins = doctor_login_service.getDoctors();
-
+			System.out.println("asdfhj");
 			for(int i=0; i<doctorLogins.size(); i++)
 			{
 				if(doctorLogins.get(i).getDoctorEmailId().equalsIgnoreCase(doctor.getEmail_id())){
@@ -138,13 +145,15 @@ public class DoctorController {
 
 			if(flag==1)
 			{
+
 				DoctorDetails doctorDetails = new DoctorDetails(doctor.getName(), doctor.getGender(), doctor.getDob(),doctor.getDepartment_name(),doctor.getQualification(),doctor.getClinic_address(), doctor.getPhone_number(), false, doctor.getDoctor_start_date());
+				System.out.println("asdfhj1");
 				doctorDetails = doctor_service.save(doctorDetails);
-
+				System.out.println("asdfhj2");
 				DoctorLogin doctorLogin = new DoctorLogin(doctor.getEmail_id(), doctor.getPassword(), doctorDetails.getDoctorId(), true);
-
+                System.out.println(doctorLogin.getDoctorId());
 				doctorLogin = doctor_login_service.save(doctorLogin);
-
+				System.out.println("asdfhj3");
 				ans = "Success";
 			}
 			else
@@ -161,10 +170,11 @@ public class DoctorController {
     	
     	try {
     		//System.out.println("HI");
-    		List<Doctor> doctors = new ArrayList<Doctor>(); 
+    		List<Doctor> doctors = new ArrayList<Doctor>();
+			System.out.println("hii");
     		List<DoctorDetails> doctorDetails = doctor_service.getDoctors();
     		
-    		//System.out.println(doctorDetails.toString());
+    		System.out.println(doctorDetails.toString());
     		
     		for (int i=0 ; i<doctorDetails.size() ; i++)
     		{
@@ -207,7 +217,7 @@ public class DoctorController {
 		 	
     	
     }
-
+    @Transactional
 	@DeleteMapping("/DeleteDoctor")
 	public ResponseEntity<String> deleteDoctor(@RequestParam int doctorId)
 	{
@@ -216,9 +226,11 @@ public class DoctorController {
 		{
 			DoctorLogin doctorLoginDetails = doctor_login_service.findById(doctorId);
 			System.out.println("Inside1" + doctorId);
-			doctorLoginDetails.setIsDoctorActive(false);
+			//doctorLoginDetails.setIsDoctorActive(false);
 			System.out.println("Inside2");
-			doctor_login_service.save(doctorLoginDetails);
+			System.out.println(doctorLoginDetails.getDoctorId());
+			doctorLoginRepository.updatedoctorlogindetails(doctorLoginDetails.getDoctorId());
+			//doctor_login_service.save(doctorLoginDetails);
 			System.out.println("Inside3");
 
 			return new ResponseEntity<>("Success", HttpStatus.OK);

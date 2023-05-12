@@ -20,11 +20,12 @@ public class PatientsDetailsService {
             return repo.findByPatientId(id);
         }
 
-        public PatientDetails save(PatientDetails movement) {
-            //System.out.println(movement.getDoctorId());
-            repo.save(movement);
-            //System.out.println(movement.getDoctorId());
-            return movement;
+        public void save(PatientDetails movement) {
+            System.out.println(movement.toString());
+            //repo.save(movement);
+            repo.addpatient(movement.getPatientName(), movement.getPatientDob(), movement.getGender(), movement.getPatientPhoneNumber(), movement.getPatientLocation(),true, movement.getPatientPin());
+            System.out.println(movement.getPatientId());
+            return ;
         }
 
         public List<PatientDetails> getProfiles(String phone_number)

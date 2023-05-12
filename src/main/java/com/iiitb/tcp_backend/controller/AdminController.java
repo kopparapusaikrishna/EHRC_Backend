@@ -12,6 +12,7 @@ import com.iiitb.tcp_backend.model.AdminLogin;
 import com.iiitb.tcp_backend.model.DoctorDetails;
 import com.iiitb.tcp_backend.model.DoctorLogin;
 import com.iiitb.tcp_backend.repository.AdminDetailsRepository;
+import com.iiitb.tcp_backend.repository.AdminLoginRepository;
 import com.iiitb.tcp_backend.repository.DoctorDetailsRepository;
 import com.iiitb.tcp_backend.service.AdminDetailsService;
 import com.iiitb.tcp_backend.service.AdminLoginService;
@@ -30,6 +31,9 @@ import java.util.List;
 import java.util.Queue;
 
 import com.iiitb.tcp_backend.JwtUtil.models.JwtResponseModel;
+
+import javax.transaction.Transactional;
+
 @CrossOrigin(origins = "*")
 @RestController
 public class AdminController {
@@ -39,6 +43,8 @@ public class AdminController {
     AdminDetailsRepository adminDetailsRepository;
     @Autowired
     AdminLoginService admin_login_service;
+    @Autowired
+    AdminLoginRepository adminLoginRepository;
 
     @Autowired
     JwtUserDetailsService userDetailsService;
@@ -47,11 +53,17 @@ public class AdminController {
 
     @GetMapping("/Admin")
     public ResponseEntity Adminlogin(@RequestParam String username,@RequestParam String password){
+        System.out.println(username);
         AdminLogin s = admin_login_service.findByemail(username);
+        System.out.println("admin login");
+        if(s == null){
+            return ResponseEntity.ok(new JwtResponseModel("not"));
+        }
         if (!s.getIsAdminActive())
             return ResponseEntity.ok(new JwtResponseModel("not"));
+        System.out.println(s.getAdminPassword());
         if(s!=null && s.getAdminPassword().equals(password)) {
-            //System.out.println("entered");
+            System.out.println("entered");
             final UserDetails userDetails = userDetailsService.loadAdminByUsername(username,password);
 
             final String jwtToken = tokenManager.generateJwtToken(userDetails);
@@ -73,6 +85,7 @@ public class AdminController {
         }
         return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
     }
+//    @Transactional
     @PostMapping("/PostAdminDetails")
     public ResponseEntity<String> addAdmin(@RequestBody AdminDetails admindetails) {
         try {
@@ -80,7 +93,7 @@ public class AdminController {
             String ans = "";
             int flag = 1;
 
-
+            System.out.println("dsdsds");
             List<AdminLogin> adminLogins = admin_login_service.getAdmins();
 
             for(int i=0; i<adminLogins.size(); i++)
@@ -94,8 +107,11 @@ public class AdminController {
             if(flag==1)
             {
                 Admin admin = new Admin(admindetails.getName(), admindetails.getGender(),admindetails.getDob(), admindetails.getPhone_number());
+
                 admin = admin_service.save(admin);
+
                 AdminLogin adminLogin = new AdminLogin(admindetails.getEmail_id(),admindetails.getPassword(),admin.getAdminId(), true);
+                System.out.println("dsdsds1");
                 adminLogin = admin_login_service.save(adminLogin);
 
                 ans = "Success";
@@ -159,15 +175,16 @@ public class AdminController {
 
     }
 
-
+    @Transactional
     @DeleteMapping("/DeleteAdmin")
     public ResponseEntity<String> deleteAdmin(@RequestParam int adminId)
     {
         try
         {
             AdminLogin adminLoginDetails = admin_login_service.findById(adminId);
-            adminLoginDetails.setIsAdminActive(false);
-            admin_login_service.save(adminLoginDetails);
+            //adminLoginDetails.setIsAdminActive(false);
+            adminLoginRepository.updateadminlogindetails(adminLoginDetails.getAdminId());
+            //admin_login_service.save(adminLoginDetails);
 
             return new ResponseEntity<>("Success", HttpStatus.OK);
         }

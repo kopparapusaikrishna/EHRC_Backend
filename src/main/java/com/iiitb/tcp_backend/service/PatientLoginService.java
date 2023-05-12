@@ -25,13 +25,13 @@ public class PatientLoginService {
 
         System.out.println("Start");
         // Send the OTP to the user's phone via SMS
-        final String ACCOUNT_SID = "ACbcec39040fe22ddea4512e79e24b6c90";
-        final String AUTH_TOKEN = "2445d6bbd53302717d6b41df7d83e147";
+        final String ACCOUNT_SID = "AC57e93cf1adf49737c5d591a9aef97f98";
+        final String AUTH_TOKEN = "566dadfee205b72be92c91777e076dff";
         final String FROM_NUMBER = "+16317693117";
 
         System.out.println("before");
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-        Verification verification = Verification.creator("VA7b7cae4a6cafb25ff2d150b9412ea804","+91"+phoneNumber,"sms").create();
+        Verification verification = Verification.creator("VA9fb1322408877c957da4e56937f75d13","+91"+phoneNumber,"sms").create();
         System.out.println(verification.getStatus());
         System.out.println("after");
 
@@ -40,12 +40,12 @@ public class PatientLoginService {
 
     public String verifyOTP(String phoneNumber, String enteredOTP) {
         // Verify the OTP entered by the user
-        final String ACCOUNT_SID = "ACbcec39040fe22ddea4512e79e24b6c90";
-        final String AUTH_TOKEN = "2445d6bbd53302717d6b41df7d83e147";
+        final String ACCOUNT_SID = "AC57e93cf1adf49737c5d591a9aef97f98";
+        final String AUTH_TOKEN = "566dadfee205b72be92c91777e076dff";
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         VerificationCheck verification;
         try {
-            verification = VerificationCheck.creator("VA7b7cae4a6cafb25ff2d150b9412ea804").setTo("+91" + phoneNumber).setCode(enteredOTP).create();
+            verification = VerificationCheck.creator("VA9fb1322408877c957da4e56937f75d13").setTo("+91" + phoneNumber).setCode(enteredOTP).create();
         }catch (Exception e){
             return "decline";
         }

@@ -1,6 +1,7 @@
 package com.iiitb.tcp_backend.service;
 
 
+import com.iiitb.tcp_backend.clientmodels.AdminDetails;
 import com.iiitb.tcp_backend.model.Admin;
 import com.iiitb.tcp_backend.repository.AdminDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,12 @@ public class AdminDetailsService {
 
     public Admin save(Admin movement) {
         //System.out.println(movement.getDoctorId());
-        repo.save(movement);
+        //repo.save(movement);
+        repo.addadmin(movement.getAdminName(),movement.getAdminGender(),movement.getAdminDob(),movement.getAdminPhoneNumber());
         //System.out.println(movement.getDoctorId());
-        return movement;
+        int id= repo.lastadmindetails();
+        System.out.println(id);
+        return repo.findByAdminId(id);
     }
 
     public List<Admin> getAdminList()

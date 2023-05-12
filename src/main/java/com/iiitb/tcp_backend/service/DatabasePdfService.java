@@ -47,7 +47,7 @@ public class DatabasePdfService {
         DoctorDetails doctor = doctorDetailsRepository.findByDoctorId(appointment.getDoctorId());
         //String medicines = appointment.getMedicines();
         PatientDetails patient = patientDetailsRepository.findByPatientId(appointment.getPatientId());
-        String medicines = "paracetomol%300 mg%3 times per day %5 days;dolo%650 mg%3 times per day%5 days";
+        String medicines = appointment.getMedicines();
         List<Medicine> medicineList = new ArrayList<>();
         List<String> strMedList = new ArrayList<>(Arrays.asList(medicines.split(";")));
 

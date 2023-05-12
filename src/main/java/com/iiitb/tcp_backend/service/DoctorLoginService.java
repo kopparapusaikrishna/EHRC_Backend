@@ -28,7 +28,8 @@ public class DoctorLoginService {
 
     public DoctorLogin save(DoctorLogin movement) {
         System.out.println("Before" + movement.getDoctorEmailId());
-        repo.save(movement);
+       // repo.save(movement);
+        repo.adddoctorLogin(movement.getDoctorEmailId(),movement.getDoctorPassword(),movement.getDoctorId(),movement.getIsDoctorActive());
         System.out.println("After"+ movement.getDoctorId());
         return movement;
     }

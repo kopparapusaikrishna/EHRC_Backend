@@ -4,6 +4,7 @@ import com.iiitb.tcp_backend.clientmodels.Profile;
 import com.iiitb.tcp_backend.model.Appointments;
 import com.iiitb.tcp_backend.model.DoctorDetails;
 import com.iiitb.tcp_backend.model.PatientDetails;
+import com.iiitb.tcp_backend.repository.PatientDetailsRepository;
 import com.iiitb.tcp_backend.service.AppointmentsService;
 import com.iiitb.tcp_backend.service.DoctorDetailsService;
 import com.iiitb.tcp_backend.service.PatientLoginService;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.transaction.Transactional;
 import java.util.*;
 
 import java.util.List;
@@ -25,7 +28,8 @@ public class PatientController {
     DoctorDetailsService doctor_service;
     @Autowired
     PatientLoginService patient_service;
-
+   @Autowired
+    PatientDetailsRepository patientDetailsRepository;
     @Autowired
     PatientsDetailsService patient_details_service;
 
@@ -144,14 +148,14 @@ public class PatientController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+   @Transactional
     @PostMapping("/PostProfileDetails")
     public ResponseEntity<String> addProfile(@RequestBody Profile profile){
         System.out.println("inside post");
         try{
             PatientDetails patientDetailsObj = new PatientDetails(profile.getName(),profile.getDob(), profile.getGender(), profile.getPhone_number(), profile.getLocation(), true, profile.getPin());
             System.out.println("torture");
-            patientDetailsObj = patient_details_service.save(patientDetailsObj);
+            patient_details_service.save(patientDetailsObj);
             return new ResponseEntity<>("Success",HttpStatus.OK);
 
 
@@ -160,16 +164,16 @@ public class PatientController {
         }
     }
 
-
+    @Transactional
     @DeleteMapping("/DeleteProfile/{patientId}")
     public ResponseEntity<String> deleteProfiles(@PathVariable("patientId") int patientId) {
         try
         {
             System.out.println("inside delete");
             PatientDetails patient = patient_details_service.findById(patientId);
-            patient.setActive(false);
-
-            patient_details_service.save(patient);
+            //patient.setActive(false);
+            System.out.println("fdfdfgg");
+            patientDetailsRepository.updatepatientdetails(patient.getPatientId());
 
             return new ResponseEntity<>("Success", HttpStatus.OK);
 

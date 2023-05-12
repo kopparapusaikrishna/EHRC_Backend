@@ -22,14 +22,18 @@ public class AdminLoginService {
         return repo.findByAdminId(id);
     }
 
-    public AdminLogin findByemail(String username)
+    public AdminLogin findByemail(String email_id)
     {
-        return repo.findByAdminEmail(username);
+        System.out.println(email_id);
+        AdminLogin al=repo.findByAdminEmail(email_id);
+        System.out.println(al);
+        return al;
     }
 
     public AdminLogin save(AdminLogin movement) {
         System.out.println("Before" + movement.getAdminEmailId());
-        repo.save(movement);
+        //repo.save(movement);
+        repo.addadmin(movement.getAdminEmailId(),movement.getAdminPassword(),movement.getAdminId(),movement.getIsAdminActive());
         System.out.println("After"+ movement.getAdminId());
         return movement;
     }

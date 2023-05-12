@@ -49,6 +49,20 @@ public class PatientDetails {
     @Column(name= "is_active")
     private boolean isActive;
 
+    @Override
+    public String toString() {
+        return "PatientDetails{" +
+                "patientId=" + patientId +
+                ", patientName='" + patientName + '\'' +
+                ", patientDob=" + patientDob +
+                ", gender='" + gender + '\'' +
+                ", patientPhoneNumber='" + patientPhoneNumber + '\'' +
+                ", patientLocation='" + patientLocation + '\'' +
+                ", patientPin='" + patientPin + '\'' +
+                ", isActive=" + isActive +
+                '}';
+    }
+
     public PatientDetails() {
     }
 

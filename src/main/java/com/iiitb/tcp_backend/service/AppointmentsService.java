@@ -22,9 +22,11 @@ public class AppointmentsService {
 
     public Appointments save(Appointments appointments) {
         //System.out.println(movement.getDoctorId());
-        repo.save(appointments);
+        //repo.save(appointments);
+        repo.addappointment(appointments.getDoctorId(),appointments.getPatientId(),appointments.getAppointmentDate(),appointments.isFollowUp(),appointments.getFollowUpDate(),appointments.getMedicines(),appointments.getPatientWeight(),appointments.getPatientTemperature(),appointments.getPatientBp());
         //System.out.println(movement.getDoctorId());--
-        return appointments;
+        int id= repo.lastappointmentdetails();
+        return repo.findByAppointmentId(id);
     }
 
     public Appointments findByAppointmentId(int id) { return repo.findByAppointmentId(id);}
